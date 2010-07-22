@@ -1,0 +1,52 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.63.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 842745cb706f8f2126506f544492f7a80dbe29b3 COPYING
+SHA1 02eb16df9cfe1358cafd2783f44dfbb5cccad792 Changes
+SHA1 f182125042320f102cf9bce183eceb91ef758b7f MANIFEST
+SHA1 9f057ed3ba7d042426c4d899f7685b4ae05076b2 MANIFEST.SKIP
+SHA1 0baf350a613c68b08c08de16fa59f8769926024e META.yml
+SHA1 06a9b905208500b7ba902e385cdb191fb78181eb Makefile.PL
+SHA1 de95a9dc2b65ad5092a1943faae18468436d813e debian/changelog
+SHA1 ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4 debian/compat
+SHA1 53935cca58e95d37e383184afa04fef2d6545255 debian/control
+SHA1 a07b529e0a10aeb135736e7e31b23fdb69abf19e debian/copyright
+SHA1 c0f4888892af4f23e0247d5de0c388efa7ce9211 debian/rules
+SHA1 61652cd1568dcf2614df833eba241755eee34e89 debian/source/format
+SHA1 2b6cd9b551b003c08b1056f29b46c5e00b650153 debian/watch
+SHA1 be670ce88266f647d5558edca54bcaa030959786 devel/run.pl
+SHA1 aa5d7b9160e3a3969a72e7f15427184e2f6f66fc devel/unused.pl
+SHA1 c692d671972440c53db493553cd899af86e36a4d inc/MyMakeMakerExtras.pm
+SHA1 692a1ddc2ca6b98cac7b48ea40bc1ac1509e8ed9 inc/my_pod2html
+SHA1 96b0a30a435148e3d7236efc2eb6b4950fed5751 lib/Image/Base/Multiplex.pm
+SHA1 92edb2e1fbb2ed085f6d5c74ef2436c5d3d481f7 lib/Image/Base/Text.pm
+SHA1 2a0a12208a8b081a1a588028c980c5472779453e t/0-META-read.t
+SHA1 37abd43b41068804ea4bb099fdd89af21be82926 t/0-Test-DistManifest.t
+SHA1 8f93fb4c8f0424a4442cc93c9a2e86342ef55281 t/0-Test-Pod.t
+SHA1 1de8f07883f6bf1a2ef79f2cb8adf1deb3f61cee t/0-Test-Synopsis.t
+SHA1 fb517c2fae5ddac559318bf6a224949115ea3129 t/0-Test-YAML-Meta.t
+SHA1 c4f3eb3c9dece08f307a98adca4a6e24669abfbb t/Multiplex.t
+SHA1 f3bc1eb4ccf4844e7d352ca88452d854c3e6b437 t/MyTestHelpers.pm
+SHA1 8b8812ca1f4cb119d3858cef00a2fc98c0a2daaf t/MyTestImageBase.pm
+SHA1 027ffd33412f8db9e4dff068251f8bfb9fa757c8 t/Text-weaken.t
+SHA1 04ec8175ac7e808a355470ba3cfea7bd082c1a5b t/Text.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iD8DBQFMSMaFLFMCIV9q3ToRAuCKAJ9Nf6VUwutCRqU7fyYtHi3FIwZRpgCdEoz/
+eMJNJjbxZRpdFkUv/jCEmn8=
+=Ww/t
+-----END PGP SIGNATURE-----
