@@ -25,7 +25,7 @@ use List::Util qw(min max);
 use Text::Tabs ();
 use vars '$VERSION', '@ISA';
 
-$VERSION = 1;
+$VERSION = 2;
 
 use Image::Base;
 @ISA = ('Image::Base');
@@ -115,9 +115,9 @@ sub load {
   }
   ### $filename
 
-  open my $fh, "<$filename" or die;
+  open my $fh, "<$filename" or croak "Cannot open $filename: $!";
   $self->load_fh ($fh);
-  close $fh or die;
+  close $fh or croak "Error closing $filename: $!";
 }
 
 # these undocumented yet ...

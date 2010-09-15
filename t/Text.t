@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 # Copyright 2010 Kevin Ryde
 
@@ -33,7 +33,7 @@ require Image::Base::Text;
 # VERSION
 
 {
-  my $want_version = 1;
+  my $want_version = 2;
   is ($Image::Base::Text::VERSION, $want_version, 'VERSION variable');
   is (Image::Base::Text->VERSION,  $want_version, 'VERSION class method');
 

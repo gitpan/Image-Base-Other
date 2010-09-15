@@ -23,7 +23,7 @@ use warnings;
 use Carp;
 use vars '$VERSION', '@ISA';
 
-$VERSION = 1;
+$VERSION = 2;
 
 use Image::Base;
 @ISA = ('Image::Base');
@@ -233,6 +233,8 @@ The target images to draw on.
 =head1 SEE ALSO
 
 L<Image::Base>
+
+L<G2> has a similar multi-output to its devices.
 
 =head1 HOME PAGE
 

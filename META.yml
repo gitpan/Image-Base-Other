@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Image-Base-Other
-version:            1
+version:            2
 abstract:           Misc other helpers for Image::Base.
 author:
     - Kevin Ryde <user42@zip.com.au>
@@ -34,6 +34,7 @@ optional_features:
         requires:
             Pod::Simple::HTML:  0
             Smart::Comments:    0
+            warnings::unused:   0
     maximum_tests:
         description:  Have "make test" do as much as possible.
         requires:
