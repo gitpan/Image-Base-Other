@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Image-Base-Other
-version:            2
+version:            3
 abstract:           Misc other helpers for Image::Base.
 author:
     - Kevin Ryde <user42@zip.com.au>
@@ -11,7 +11,7 @@ configure_requires:
 build_requires:
     ExtUtils::MakeMaker:  0
 requires:
-    Image::Base:  0
+    Image::Base:  1.09
     List::Util:   0
     perl:         5.004
     Test::More:   0

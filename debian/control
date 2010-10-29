@@ -27,6 +27,7 @@ Bugs: mailto:user42@zip.com.au
 Package: libimage-base-other-perl
 Architecture: all
 Depends: perl (>= 5.004), libwarnings-perl | perl-modules (>= 5.6), libscalar-list-utils-perl | perl-modules (>= 5.8), libimage-base-perl | libimage-base-bundle-perl, ${perl:Depends}, ${misc:Depends}
+Recommends: libimage-base-perl (>= 1.09)
 Description: Misc other helpers for Image::Base
  Includes Image::Base::Text for text files and Image::Base::Multiplex
  for drawing to multiple image objects at once.

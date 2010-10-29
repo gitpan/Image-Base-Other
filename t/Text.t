@@ -20,20 +20,20 @@
 use 5.004;
 use strict;
 use warnings;
-use Test::More tests => 1008;
+use Test::More tests => 1152;
 
 use lib 't';
 use MyTestHelpers;
 MyTestHelpers::nowarnings();
 
 require Image::Base::Text;
-
+diag "Image::Base version ", Image::Base->VERSION;
 
 #------------------------------------------------------------------------------
 # VERSION
 
 {
-  my $want_version = 2;
+  my $want_version = 3;
   is ($Image::Base::Text::VERSION, $want_version, 'VERSION variable');
   is (Image::Base::Text->VERSION,  $want_version, 'VERSION class method');
 
@@ -317,8 +317,7 @@ SKIP: {
      -height => 10,
      -character_to_colour => { ' ' => 'black',
                                '*' => 'white' });
-  MyTestImageBase::check_image ($image,
-                                base_ellipse => 1);
+  MyTestImageBase::check_image ($image);
 }
 
 exit 0;

@@ -23,11 +23,50 @@ use warnings;
 
 use Smart::Comments;
 
+use lib "$ENV{HOME}/p/base/108/lib";
+
 {
   require Image::Base::Text;
+  print "Image::Base version ", Image::Base->VERSION, "\n";
+  my $image = Image::Base::Text->new (-width => 30, -height => 30);
+
+  $image->rectangle (0,0, 29,29, ' ', 1);
+  $image->ellipse (1,1, 28,28, '*');
+  $image->save('/dev/stdout');
+
+  exit 0;
+}
+
+{
+  require Image::Base::Text;
+  print "Image::Base version ", Image::Base->VERSION, "\n";
   my $image = Image::Base::Text->new (-width => 10, -height => 10);
-  $image->rectangle (0,0, 9,9, 'black');
-  $image->rectangle (3,3, 7,7, '#FFFF0000FFFF');
+
+  # $image->rectangle (3,3, 7,7, '#FFFF0000FFFF');
+
+  $image->rectangle (0,0, 9,9, 'black', 1);
+  $image->line (0,0, 5,9, '#FFFF0000FFFF');
+  $image->save('/dev/stdout');
+
+  $image->rectangle (0,0, 9,9, 'black', 1);
+  $image->line (0,0, 9,5, '#FFFF0000FFFF');
+  $image->save('/dev/stdout');
+
+  $image->rectangle (0,0, 9,9, 'black', 1);
+  $image->line (0,5, 9,0, '#FFFF0000FFFF');
+  $image->save('/dev/stdout');
+
+  $image->rectangle (0,0, 9,9, 'black', 1);
+  $image->line (0,9, 5,0, '#FFFF0000FFFF');
+  $image->save('/dev/stdout');
+
+  $image->rectangle (0,0, 9,9, 'black', 1);
+  $image->line (3,3, 9,3, '#FFFF0000FFFF');
+  $image->save('/dev/stdout');
+
+  $image->rectangle (0,0, 9,9, 'black', 1);
+  $image->line (3,3, 3,9, '#FFFF0000FFFF');
+  $image->save('/dev/stdout');
 
   exit 0;
 }

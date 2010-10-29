@@ -46,8 +46,8 @@ sub my_ignore {
        ignore => \&my_ignore,
      });
   is ($leaks, undef, 'deep garbage collection');
-  if ($leaks && defined &explain) {
-    diag "Test-Weaken ", explain $leaks;
+  if ($leaks) {
+    eval { diag "Test-Weaken ", explain($leaks) }; # explain in Test::More 0.82
   }
 }
 

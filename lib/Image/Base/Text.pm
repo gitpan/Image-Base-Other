@@ -25,9 +25,9 @@ use List::Util qw(min max);
 use Text::Tabs ();
 use vars '$VERSION', '@ISA';
 
-$VERSION = 2;
+$VERSION = 3;
 
-use Image::Base;
+use Image::Base 1.09; # version 1.09 for ellipse() fixes chaining up to that
 @ISA = ('Image::Base');
 
 # uncomment this to run the ### lines

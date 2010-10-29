@@ -23,7 +23,7 @@ use warnings;
 use Carp;
 use vars '$VERSION', '@ISA';
 
-$VERSION = 2;
+$VERSION = 3;
 
 use Image::Base;
 @ISA = ('Image::Base');

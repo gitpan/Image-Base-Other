@@ -20,7 +20,7 @@
 use 5.004;
 use strict;
 use warnings;
-use Test::More tests => 1755;
+use Test::More tests => 1899;
 
 use lib 't';
 use MyTestHelpers;
@@ -33,7 +33,7 @@ require Image::Base::Multiplex;
 # VERSION
 
 {
-  my $want_version = 2;
+  my $want_version = 3;
   is ($Image::Base::Multiplex::VERSION, $want_version, 'VERSION variable');
   is (Image::Base::Multiplex->VERSION,  $want_version, 'VERSION class method');
 
@@ -111,8 +111,7 @@ require Image::Base::Multiplex;
   my $multiplex = Image::Base::Multiplex->new (-images => [$text]);
 
   require MyTestImageBase;
-  MyTestImageBase::check_image ($multiplex,
-                                base_ellipse_func => sub{1});
+  MyTestImageBase::check_image ($multiplex);
 }
 
 exit 0;

@@ -34,14 +34,15 @@ MyMakeMakerExtras::WriteMakefile
    PREREQ_PM    => {
                     'warnings' => 0,
                     'List::Util' => 0,
-                    'Image::Base' => 0,
+                    'Image::Base' => '1.09',  # for ellipse() fixes
                     'Test::More' => 0,
                    },
    MIN_PERL_VERSION => '5.004',
 
    META_MERGE
    => { resources
-        => { homepage => 'http://user42.tuxfamily.org/image-base-other/index.html',
+        => { homepage
+             => 'http://user42.tuxfamily.org/image-base-other/index.html',
            },
         optional_features
         => { maximum_tests
