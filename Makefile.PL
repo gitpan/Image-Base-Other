@@ -34,7 +34,7 @@ MyMakeMakerExtras::WriteMakefile
    PREREQ_PM    => {
                     'warnings' => 0,
                     'List::Util' => 0,
-                    'Image::Base' => '1.09',  # for ellipse() fixes
+                    'Image::Base' => '1.12',  # for ellipse() $fill
                     'Test::More' => 0,
                    },
    MIN_PERL_VERSION => '5.004',

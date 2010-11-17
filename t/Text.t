@@ -20,7 +20,7 @@
 use 5.004;
 use strict;
 use warnings;
-use Test::More tests => 1152;
+use Test::More tests => 1381;
 
 use lib 't';
 use MyTestHelpers;
@@ -33,7 +33,7 @@ diag "Image::Base version ", Image::Base->VERSION;
 # VERSION
 
 {
-  my $want_version = 3;
+  my $want_version = 4;
   is ($Image::Base::Text::VERSION, $want_version, 'VERSION variable');
   is (Image::Base::Text->VERSION,  $want_version, 'VERSION class method');
 

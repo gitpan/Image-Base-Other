@@ -20,7 +20,7 @@
 use 5.004;
 use strict;
 use warnings;
-use Test::More tests => 1899;
+use Test::More tests => 2128;
 
 use lib 't';
 use MyTestHelpers;
@@ -33,7 +33,7 @@ require Image::Base::Multiplex;
 # VERSION
 
 {
-  my $want_version = 3;
+  my $want_version = 4;
   is ($Image::Base::Multiplex::VERSION, $want_version, 'VERSION variable');
   is (Image::Base::Multiplex->VERSION,  $want_version, 'VERSION class method');
 
