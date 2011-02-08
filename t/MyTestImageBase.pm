@@ -1,6 +1,6 @@
 # MyTestImageBase.pm -- some tests for Image::Base subclasses
 
-# Copyright 2010 Kevin Ryde
+# Copyright 2010, 2011 Kevin Ryde
 
 # MyTestImageBase.pm is shared by several distributions.
 #
@@ -17,18 +17,50 @@
 # You should have received a copy of the GNU General Public License along
 # with this file.  If not, see <http://www.gnu.org/licenses/>.
 
+
+# wide/high ellipse cases
+# fill check no gaps
+# fill check concave
+
+
 package MyTestImageBase;
 use strict;
-use warnings;
-use List::Util 'min', 'max';
-use Test::More;
+
+use vars '$white', '$white_expect', '$black';
+$white = 'white';
+$black = 'black';
 
 # uncomment this to run the ### lines
 #use Smart::Comments;
 
-our $white = 'white';
-our $white_expect;
-our $black = 'black';
+sub min {
+  my $ret = shift;
+  while (@_) {
+    my $n = shift;
+    if ($ret > $n) {
+      $ret = $n;
+    }
+  }
+  return $ret;
+}
+sub max {
+  my $ret = shift;
+  while (@_) {
+    my $n = shift;
+    if ($ret < $n) {
+      $ret = $n;
+    }
+  }
+  return $ret;
+}
+
+sub is {
+  if (Test::More->can('is')) {
+    &Test::More::is (@_); # no prototypes
+  } else {
+    &Test::ok (@_); # no prototypes
+  }
+}
 
 sub mung_colour {
   my ($colour) = @_;
@@ -45,7 +77,7 @@ sub dump_image {
   my ($image, $x1,$x2, $y, $colour, $name) = @_;
   my $width = $image->get('-width');
   my $height = $image->get('-height');
-  diag "dump_image";
+  MyTestHelpers::diag("dump_image");
   foreach my $y (0 .. $height-1) {
     my $str = '';
     foreach my $x (0 .. $width-1) {
@@ -56,11 +88,22 @@ sub dump_image {
         $str .= substr ($colour, 0,1);
       }
     }
-    diag $str;
+    MyTestHelpers::diag($str);
   }
 }
 
 #-----------------------------------------------------------------------------
+
+sub is_pixel {
+  my ($image, $x,$y, $colour, $name) = @_;
+  my $width = $image->get('-width');
+
+  my $got = mung_colour($image->xy($x,$y));
+  is ($got, $colour, "pixel $x,$y  $colour  on $name");
+  my $bad = ($got ne $colour);
+  ### $bad
+  return $bad;
+}
 
 sub is_hline {
   my ($image, $x1,$x2, $y, $colour, $name) = @_;
@@ -89,7 +132,7 @@ sub is_vline {
   my $bad = 0;
   foreach my $y (max(0,$y1) .. min($y2,$height-1)) {
     my $got = mung_colour($image->xy($x,$y));
-    is ($got, $colour, "vline $x,$y  $colour  on $name");
+    is ($got, $colour, "vline x=$x,y=$y want $colour  on $name");
     $bad += ($got ne $colour);
   }
   ### $bad
@@ -132,7 +175,8 @@ sub some_hline {
       return 0; # good
     }
   }
-  ok (0, "some_hline x=$x1..$x2,y=$y  $colour  on $name");
+  is (0,1,
+      "some_hline x=$x1..$x2,y=$y  $colour  on $name");
   return 1; # bad
 }
 
@@ -145,7 +189,8 @@ sub some_vline {
       return 0; # good
     }
   }
-  ok (0, "some_vline x=$x,y=$y1..$y2  $colour  on $name");
+  is (0,1,
+      "some_vline x=$x,y=$y1..$y2  $colour  on $name");
   return 1; # bad
 }
 
@@ -156,8 +201,9 @@ sub all_hline {
   foreach my $x ($x1 .. $x2) {
     ### all_hline look at: "$x,$y c=".$image->xy($x,$y)
     my $got = mung_colour($image->xy($x,$y));
+    is ($got, $colour,
+        "all_hline x=$x1..$x2,y=$y  $colour  on $name");
     if ($got ne $colour) {
-      ok (0, "all_hline x=$x1..$x2,y=$y  $colour  on $name");
       return 1; # bad
     }
   }
@@ -171,13 +217,15 @@ sub all_vline {
   foreach my $y ($y1 .. $y2) {
     ### all_hline look at: "$x,$y"
     my $got = mung_colour($image->xy($x,$y));
+    is ($got, $colour,
+        "all_vline x=$x,y=$y1..$y  $colour  on $name");
     if ($got ne $colour) {
-      ok (0, "all_vline x=$x,y=$y1..$y  $colour  on $name");
       return 1; # bad
     }
   }
   return 0; # good
 }
+
 
 #-----------------------------------------------------------------------------
 
@@ -211,12 +259,12 @@ sub check_line {
     $image->rectangle (0,0, $width-1,$height-1, $black, 1);
     $image->line ($x1,$y1, $x2,$y2, $white);
 
-    is (mung_colour($image->xy($x1,$y1)),
-        $white_expect,
-        "corner $x1,$y1 of $name");
-    is_rect ($image, $x1-1,$x2+1, $y1-1,$y2+1, $black, $name);
-
-    # dump_image ($image);
+    my $bad = (is_pixel ($image, $x1,$y1, $white, $name)
+               + is_pixel ($image, $x2,$y2, $white, $name)
+               + is_rect ($image, $x1-1,$x2+1, $y1-1,$y2+1, $black, $name));
+    if ($bad) {
+      dump_image ($image);
+    }
   }
 }
 
@@ -313,7 +361,7 @@ sub check_ellipse {
         $bad += (all_hline ($image, $x1,$x2, int(($y1+$y2)/2), $white_expect,$name)
                  + all_hline ($image, $x1,$x2, int(($y1+$y2+1)/2), $white_expect,$name)
                  + all_vline ($image, int(($x1+$x2)/2), $y1,$y2, $white_expect,$name)
-                 + all_vline ($image, int(($x1+$x2+1)/2), $y1,$y2, $white_expect ,$name)
+                 + all_vline ($image, int(($x1+$x2+1)/2), $y1,$y2, $white_expect,$name)
                 );
       }
       if ($bad) { dump_image($image); }

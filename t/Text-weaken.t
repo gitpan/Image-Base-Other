@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2010 Kevin Ryde
+# Copyright 2010, 2011 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -17,21 +17,26 @@
 # You should have received a copy of the GNU General Public License along
 # with Image-Base-Other.  If not, see <http://www.gnu.org/licenses/>.
 
+use 5.004;
 use strict;
-use warnings;
 use Image::Base::Text;
-use Test::More;
+use Test;
+BEGIN {
+  plan tests => 1;
+}
 
 use lib 't';
 use MyTestHelpers;
 MyTestHelpers::nowarnings();
 
 # 2.002 for "ignore"
-eval "use Test::Weaken 2.002; 1"
-  or plan skip_all => "due to Test::Weaken 2.002 not available -- $@";
-diag ("Test::Weaken version ", Test::Weaken->VERSION);
+my $have_test_weaken = eval "use Test::Weaken 2.002; 1";
+if (! $have_test_weaken) {
+  MyTestHelpers::diag ("Test::Weaken 2.002 not available -- $@");
+}
+my $skip = "due to Test::Weaken 2.002 not available";
+MyTestHelpers::diag ("Test::Weaken version ", Test::Weaken->VERSION);
 
-plan tests => 1;
 
 sub my_ignore {
   my ($ref) = @_;
@@ -39,15 +44,18 @@ sub my_ignore {
 }
 
 {
-  my $leaks = Test::Weaken::leaks
+  my $leaks = $have_test_weaken && Test::Weaken::leaks
     ({ constructor => sub {
          return Image::Base::Text->new (-width => 10, -height => 10);
        },
        ignore => \&my_ignore,
      });
-  is ($leaks, undef, 'deep garbage collection');
+  ok (defined $leaks,
+      '',
+      'deep garbage collection');
   if ($leaks) {
-    eval { diag "Test-Weaken ", explain($leaks) }; # explain in Test::More 0.82
+    require Data::Dumper;
+    MyTestHelpers::diag (Data::Dumper::Dumper($leaks));
   }
 }
 

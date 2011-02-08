@@ -17,9 +17,11 @@ Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
 SIGNATURE
+t/Multiplex-load.t
 t/Multiplex.t
 t/MyTestHelpers.pm
 t/MyTestImageBase.pm
+t/Text-load.t
 t/Text-weaken.t
 t/Text.t
 xt/0-META-read.t

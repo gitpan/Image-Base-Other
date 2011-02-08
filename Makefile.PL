@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright 2010 Kevin Ryde
+# Copyright 2010, 2011 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -19,7 +19,6 @@
 
 use 5.004;
 use strict;
-use warnings;
 use ExtUtils::MakeMaker;
 use lib 'inc';
 use MyMakeMakerExtras;
@@ -32,32 +31,30 @@ MyMakeMakerExtras::WriteMakefile
    LICENSE      => 'gpl',
    SIGN         => 1,
    PREREQ_PM    => {
-                    'warnings' => 0,
-                    'List::Util' => 0,
                     'Image::Base' => '1.12',  # for ellipse() $fill
-                    'Test::More' => 0,
+                    'Test' => 0,
                    },
+   # aiming for 5.004 same as Image::Base
    MIN_PERL_VERSION => '5.004',
 
-   META_MERGE
-   => { resources
-        => { homepage
-             => 'http://user42.tuxfamily.org/image-base-other/index.html',
-           },
-        optional_features
-        => { maximum_tests
-             => { description => 'Have "make test" do as much as possible.',
-                  requires =>
-                  { # Test::Weaken 2.002 for "ignore"
-                   'Test::Weaken' => '2.002',
-                   'File::Temp' => '0.14',
-                  },
-                },
-             maximum_devel
-             => { description => 'Stuff used variously for development.',
-                  requires => { 'Smart::Comments'     => 0,
-                              }
-                },
-           },
+   META_MERGE =>
+   { resources =>
+     { homepage => 'http://user42.tuxfamily.org/image-base-other/index.html',
+     },
+     optional_features =>
+     {
+      maximum_tests =>
+      { description => 'Have "make test" do as much as possible.',
+        requires => { # Test::Weaken 2.002 for "ignore"
+                     'Test::Weaken' => '2.002',
+                     'File::Temp' => '0.14',
+                    },
       },
+      maximum_devel =>
+      { description => 'Stuff used variously for development.',
+        requires => { 'Smart::Comments'     => 0,
+                    },
+      },
+     },
+   },
   );

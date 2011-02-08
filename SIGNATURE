@@ -15,38 +15,40 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 842745cb706f8f2126506f544492f7a80dbe29b3 COPYING
-SHA1 835f728ac7b47ef13d38e9ad943c3ba3127b38e9 Changes
-SHA1 a1ba5aa80eadaa2ad4f16da3833dd70121046a56 MANIFEST
-SHA1 e6e7c2904ea5d300c0ddf70fc5a80f5005229aa9 MANIFEST.SKIP
-SHA1 0fef79189f67a8618539056d464e298f2577e324 META.yml
-SHA1 ab0e6ca959f0c71413a7e79df5f5c7cc6306ef1e Makefile.PL
-SHA1 8458e77449ac7dc0592a204ec9693832b70d58c0 debian/changelog
+SHA1 61e6ca885ff364a11a09fbb15359be00f6a74e8d Changes
+SHA1 97e3538691630d688421b33a9490730b8b1a1c9a MANIFEST
+SHA1 6c771cc4b0718f7bc9c9af01889700d7bce0a8e6 MANIFEST.SKIP
+SHA1 1a000c7520d8a6f8514e1867bcdf3445783ce7ea META.yml
+SHA1 0c929f8e5aa7d3c60a18fe1f472c2abffc2cb3d0 Makefile.PL
+SHA1 85b29eaa4bf027cb1372a9bb2e0b5655b9fc0567 debian/changelog
 SHA1 ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4 debian/compat
-SHA1 4352079f03fbf3f34d518a31afa7fa29504c223c debian/control
-SHA1 a07b529e0a10aeb135736e7e31b23fdb69abf19e debian/copyright
+SHA1 3e86459466a968bf18fb9035abaf3198b50640a6 debian/control
+SHA1 2cd7698b0b51c736379e32b89375d06f38e1b0f7 debian/copyright
 SHA1 c0f4888892af4f23e0247d5de0c388efa7ce9211 debian/rules
 SHA1 61652cd1568dcf2614df833eba241755eee34e89 debian/source/format
 SHA1 2b6cd9b551b003c08b1056f29b46c5e00b650153 debian/watch
-SHA1 f744bbfdee16b9186192720596ebb18afe483e4c devel/run.pl
+SHA1 cd3b50153d7c5867b128de7cbc89b9785f427f13 devel/run.pl
 SHA1 aa5d7b9160e3a3969a72e7f15427184e2f6f66fc devel/unused.pl
-SHA1 4fb53efe76b3b2264eaa4cf7780cb0c4923e18a5 inc/MyMakeMakerExtras.pm
-SHA1 692a1ddc2ca6b98cac7b48ea40bc1ac1509e8ed9 inc/my_pod2html
-SHA1 c560897fbd57eb7cd9c4a1c4945663f08dc5fbeb lib/Image/Base/Multiplex.pm
-SHA1 5475d2480c08ae6b52cf16affc2f1907b49e1827 lib/Image/Base/Text.pm
-SHA1 ffd330d9c10d300aaf2ad74c31735c7d080f92ab t/Multiplex.t
-SHA1 5e5680b471811244fe93571efc23e7b6089cac3b t/MyTestHelpers.pm
-SHA1 04ec62124e0c36edacf941e73983b0f8e3f9ae18 t/MyTestImageBase.pm
-SHA1 4e154b09a9e87d61a3ed39f91ed352637f3fdcca t/Text-weaken.t
-SHA1 78b2d05506a93d20c3f2b40e9f5e8d1999b71a8c t/Text.t
-SHA1 9127f78a0dfa04976acbb979dd7862ef59a74c58 xt/0-META-read.t
-SHA1 37abd43b41068804ea4bb099fdd89af21be82926 xt/0-Test-DistManifest.t
-SHA1 8f93fb4c8f0424a4442cc93c9a2e86342ef55281 xt/0-Test-Pod.t
-SHA1 1de8f07883f6bf1a2ef79f2cb8adf1deb3f61cee xt/0-Test-Synopsis.t
-SHA1 fb517c2fae5ddac559318bf6a224949115ea3129 xt/0-Test-YAML-Meta.t
+SHA1 cf647ee28a7aaad9896d0063f8a2529919ccfcd3 inc/MyMakeMakerExtras.pm
+SHA1 7a988b2aa7ed09f1cb9029a1ef3f0e2139dca0cf inc/my_pod2html
+SHA1 34d3d5f0832476c1b69b7b26a0810cb9fc974a45 lib/Image/Base/Multiplex.pm
+SHA1 ee8aab954ba43df1cdd1695149bb1d5f55e3388b lib/Image/Base/Text.pm
+SHA1 d446053346aa58d2b431a21e7d92ce184c7f59f1 t/Multiplex-load.t
+SHA1 877f06bcfec753631d91206b1d7201069c41ed23 t/Multiplex.t
+SHA1 36b8eba56c87d62b1b41959187c717577dc16fa5 t/MyTestHelpers.pm
+SHA1 a75f20cb81375b7fe648fdcdf217a19f05b80e41 t/MyTestImageBase.pm
+SHA1 ff0317211f4ce4ca803109175d00a220ebc84aae t/Text-load.t
+SHA1 ffdd7f78e938b4ce3bc8ce3390b4b6874ee1099e t/Text-weaken.t
+SHA1 9de7e9ba9c464e3bd4a8feeaf3432268a27ec045 t/Text.t
+SHA1 0279c9310ec528d10a2a14e602bf98f1c776cce1 xt/0-META-read.t
+SHA1 8a5e0f34131de34e584fbb1939c191a152566155 xt/0-Test-DistManifest.t
+SHA1 cc04a5fe5d8b8b38bfd56453d5d2686c8ea58783 xt/0-Test-Pod.t
+SHA1 8cc52e23427a82cfef5802bf512b13c65de2687a xt/0-Test-Synopsis.t
+SHA1 4c14845872d6eb4280e12f862d6ba2c343358c60 xt/0-Test-YAML-Meta.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iD8DBQFM4yMcLFMCIV9q3ToRAqA4AKCto9Z+AsRNE2N4quobAgiYHB2RsACfanvD
-3p2k/Hf/BkkXinXRilUTSfY=
-=Ruyw
+iD8DBQFNUIxzLFMCIV9q3ToRArXnAJ9FgkxIlzrHdm9GvdoePRhatEEi0wCeMMPt
+nO+Fl4AyRICpPFnku2gvyWA=
+=VaK+
 -----END PGP SIGNATURE-----

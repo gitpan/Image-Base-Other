@@ -1,4 +1,4 @@
-# Copyright 2010 Kevin Ryde
+# Copyright 2010, 2011 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -19,13 +19,11 @@
 package Image::Base::Text;
 use 5.004;  # maybe one day 5.005 for 4-arg substr() replacing
 use strict;
-use warnings;
 use Carp;
-use List::Util qw(min max);
 use Text::Tabs ();
 use vars '$VERSION', '@ISA';
 
-$VERSION = 4;
+$VERSION = 5;
 
 use Image::Base 1.12; # version 1.12 for ellipse() $fill
 @ISA = ('Image::Base');
@@ -115,9 +113,9 @@ sub load {
   }
   ### $filename
 
-  open my $fh, "<$filename" or croak "Cannot open $filename: $!";
-  $self->load_fh ($fh);
-  close $fh or croak "Error closing $filename: $!";
+  open FH, "<$filename" or croak "Cannot open $filename: $!";
+  $self->load_fh (\*FH);
+  close FH or croak "Error closing $filename: $!";
 }
 
 # these undocumented yet ...
@@ -145,7 +143,9 @@ sub load_lines {
   my $width = 0;
   foreach my $row (@rows_array) {
     $row = Text::Tabs::expand ($row);
-    $width = max ($width, length($row));
+    if ($width < length($row)) {
+      $width = length($row);
+    }
   }
 
   $self->{'-rows_array'} = \@rows_array;
@@ -162,10 +162,9 @@ sub save {
   }
   ### $filename
 
-  my $fh;
-  (open $fh, ">$filename"
-   and $self->save_fh($fh)
-   and close $fh)
+  (open FH, "> $filename"
+   and $self->save_fh(\*FH)
+   and close FH)
     or croak "Error writing $filename: $!";
 }
 
@@ -205,12 +204,13 @@ sub rectangle {
   if ($x1 > $x2) { ($x1,$x2) = ($x2,$x1); }
   if ($y1 > $y2) { ($y1,$y2) = ($y2,$y1); }
 
-  # supposed to clip?
-  $x1 = max($x1,0);
-  $y1 = max($y1,0);
-  $x2 = min($x2,$self->{'-width'});
   my $rows_array = $self->{'-rows_array'};
-  $y2 = min($y2,$#$rows_array);
+
+  # not supposed to clip ...
+  # $x1 = max($x1,0);
+  # $y1 = max($y1,0);
+  # $x2 = min($x2,$self->{'-width'});
+  # $y2 = min($y2,$#$rows_array);
 
   my $char = $self->colour_to_character($colour);
   my $x_width = $x2 - $x1 + 1;
@@ -267,7 +267,7 @@ sub character_to_colour {
 1;
 __END__
 
-=for stopwords filename undef Ryde resizes
+=for stopwords filename undef Ryde resizes PerlIO
 
 =head1 NAME
 
@@ -377,7 +377,7 @@ http://user42.tuxfamily.org/image-base-other/index.html
 
 =head1 LICENSE
 
-Image-Base-Other is Copyright 2010 Kevin Ryde
+Image-Base-Other is Copyright 2010, 2011 Kevin Ryde
 
 Image-Base-Other is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as published by

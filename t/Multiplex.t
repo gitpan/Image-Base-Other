@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2010 Kevin Ryde
+# Copyright 2010, 2011 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -19,8 +19,10 @@
 
 use 5.004;
 use strict;
-use warnings;
-use Test::More tests => 2128;
+use Test;
+BEGIN {
+  plan tests => 2329;
+}
 
 use lib 't';
 use MyTestHelpers;
@@ -33,22 +35,26 @@ require Image::Base::Multiplex;
 # VERSION
 
 {
-  my $want_version = 4;
-  is ($Image::Base::Multiplex::VERSION, $want_version, 'VERSION variable');
-  is (Image::Base::Multiplex->VERSION,  $want_version, 'VERSION class method');
+  my $want_version = 5;
+  ok ($Image::Base::Multiplex::VERSION, $want_version, 'VERSION variable');
+  ok (Image::Base::Multiplex->VERSION,  $want_version, 'VERSION class method');
 
   ok (eval { Image::Base::Multiplex->VERSION($want_version); 1 },
+      1,
       "VERSION class check $want_version");
   my $check_version = $want_version + 1000;
   ok (! eval { Image::Base::Multiplex->VERSION($check_version); 1 },
+      1,
       "VERSION class check $check_version");
 
   my $multiplex = Image::Base::Multiplex->new;
-  is ($multiplex->VERSION,  $want_version, 'VERSION object method');
+  ok ($multiplex->VERSION,  $want_version, 'VERSION object method');
 
   ok (eval { $multiplex->VERSION($want_version); 1 },
+      1,
       "VERSION object check $want_version");
   ok (! eval { $multiplex->VERSION($check_version); 1 },
+      1,
       "VERSION object check $check_version");
 }
 
@@ -57,13 +63,17 @@ require Image::Base::Multiplex;
 
 {
   my $multiplex = Image::Base::Multiplex->new;
-  isa_ok ($multiplex, 'Image::Base');
-  isa_ok ($multiplex, 'Image::Base::Multiplex');
-
-  is_deeply ($multiplex->get('-images'), [], '-images default empty []');
+  ok (defined $multiplex && $multiplex->isa('Image::Base') && 1,
+      1);
+  ok (defined $multiplex && $multiplex->isa('Image::Base::Multiplex') && 1,
+      1);
+  my $aref = $multiplex->get('-images');
+  ok ($aref && ref $aref eq 'ARRAY' && @$aref == 0,
+      1,
+      '-images default empty []');
 
   $multiplex->add_colours ('black');
-  ok (1, 'add_colours() when no images');
+  ok (1, 1, 'add_colours() when no images');
 }
 
 {
@@ -71,15 +81,18 @@ require Image::Base::Multiplex;
   my $text = Image::Base::Text->new (-width => 6,
                                      -height => 7);
   my $multiplex = Image::Base::Multiplex->new (-images => [$text]);
-  is_deeply ($multiplex->get('-images'), [$text], '-images one Text');
-  is ($multiplex->get('-width'), 6);
-  is ($multiplex->get('-height'), 7);
+  my $aref = $multiplex->get('-images');
+  ok ($aref && ref $aref eq 'ARRAY' && @$aref == 1 && $aref->[0] == $text,
+      1,
+      '-images one Text');
+  ok ($multiplex->get('-width'), 6);
+  ok ($multiplex->get('-height'), 7);
 
   $multiplex->xy (0,0, '*');
-  is ($text->xy(0,0), '*');
+  ok ($text->xy(0,0), '*');
 
   $multiplex->add_colours ('black');
-  ok (1, 'add_colours() to one Text');
+  ok (1, 1, 'add_colours() to one Text');
 }
 
 {
@@ -91,14 +104,18 @@ require Image::Base::Multiplex;
                                       -height => 9);
 
   my $multiplex = Image::Base::Multiplex->new (-images => [$text1,$text2]);
-  is_deeply ($multiplex->get('-images'), [$text1,$text2], '-images two Text');
+  my $aref = $multiplex->get('-images');
+  ok ($aref && ref $aref eq 'ARRAY' && @$aref == 2 && $aref->[0] == $text1
+      && $aref->[1] == $text2,
+      1,
+      '-images two Text');
 
   $multiplex->xy (0,0, '*');
-  is ($text1->xy(0,0), '*');
-  is ($text2->xy(0,0), '*');
+  ok ($text1->xy(0,0), '*');
+  ok ($text2->xy(0,0), '*');
 
   $multiplex->add_colours ('black');
-  ok (1, 'add_colours() to two Text');
+  ok (1, 1, 'add_colours() to two Text');
 }
 
 {

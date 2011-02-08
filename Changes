@@ -1,4 +1,4 @@
-Copyright 2010 Kevin Ryde
+Copyright 2010, 2011 Kevin Ryde
 
 This file is part of Image-Base-Other.
 
@@ -15,6 +15,9 @@ General Public License for more details.
 You can get a copy of the GNU General Public License online at
 <http://www.gnu.org/licenses/>.
 
+
+Version 5, February 2011
+    - fixes for perl 5.6 and earlier
 
 Version 4, November 2010
     - ellipse() new $fill parameter

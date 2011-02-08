@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2010 Kevin Ryde
+# Copyright 2010, 2011 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -17,13 +17,20 @@
 # You should have received a copy of the GNU General Public License along
 # with Image-Base-Other.  If not, see <http://www.gnu.org/licenses/>.
 
-use 5.004;
 use strict;
-use warnings;
-
 use Smart::Comments;
 
-use lib "$ENV{HOME}/p/base/108/lib";
+# use lib "$ENV{HOME}/p/base/108/lib";
+
+{
+  require File::Temp;
+  my $stdout = \*STDOUT;
+  my $fh = File::Temp->new;
+  my $eq = ($fh == $stdout);
+  # my $eq = ($fh == $fh);
+  print "$fh $eq\n";
+  exit 0;
+}
 
 {
   require Image::Base::Text;
@@ -32,7 +39,7 @@ use lib "$ENV{HOME}/p/base/108/lib";
 
   $image->rectangle (0,0, 29,29, ' ', 1);
   $image->ellipse (1,1, 28,28, '*');
-  $image->save('/dev/stdout');
+  $image->save('>mystrangename');
 
   exit 0;
 }

@@ -1,4 +1,4 @@
-# Copyright 2010 Kevin Ryde
+# Copyright 2010, 2011 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -19,11 +19,10 @@
 package Image::Base::Multiplex;
 use 5.004;
 use strict;
-use warnings;
 use Carp;
 use vars '$VERSION', '@ISA';
 
-$VERSION = 4;
+$VERSION = 5;
 
 use Image::Base;
 @ISA = ('Image::Base');
@@ -159,7 +158,7 @@ sub Image_Base_Other_rectangles {
 1;
 __END__
 
-=for stopwords filename undef Ryde arrayref
+=for stopwords filename Ryde arrayref multi-output
 
 =head1 NAME
 
@@ -242,7 +241,7 @@ http://user42.tuxfamily.org/image-base-other/index.html
 
 =head1 LICENSE
 
-Image-Base-Other is Copyright 2010 Kevin Ryde
+Image-Base-Other is Copyright 2010, 2011 Kevin Ryde
 
 Image-Base-Other is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as published by

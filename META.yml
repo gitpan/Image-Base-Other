@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Image-Base-Other
-version:            4
+version:            5
 abstract:           Misc other helpers for Image::Base.
 author:
     - Kevin Ryde <user42@zip.com.au>
@@ -12,10 +12,8 @@ build_requires:
     ExtUtils::MakeMaker:  0
 requires:
     Image::Base:  1.12
-    List::Util:   0
     perl:         5.004
-    Test::More:   0
-    warnings:     0
+    Test:         0
 resources:
     homepage:  http://user42.tuxfamily.org/image-base-other/index.html
     license:   http://www.gnu.org/licenses/gpl.html
