@@ -21,7 +21,7 @@ use 5.004;
 use strict;
 use Test;
 BEGIN {
-  plan tests => 1583;
+  plan tests => 1553;
 }
 
 use lib 't';
@@ -31,11 +31,12 @@ MyTestHelpers::nowarnings();
 use Image::Base::Text;
 MyTestHelpers::diag("Image::Base version ", Image::Base->VERSION);
 
+
 #------------------------------------------------------------------------------
 # VERSION
 
 {
-  my $want_version = 5;
+  my $want_version = 6;
   ok ($Image::Base::Text::VERSION, $want_version, 'VERSION variable');
   ok (Image::Base::Text->VERSION,  $want_version, 'VERSION class method');
 
@@ -177,7 +178,7 @@ foreach my $elem (["", 0,0],
   my $filename = 'tempfile.tmp';
   unlink $filename;
   END { unlink $filename; }
-  MyTestHelpers::diag("temp file ",$filename);
+  MyTestHelpers::diag("test file '$filename'");
 
   # save file
   {
@@ -218,6 +219,34 @@ foreach my $elem (["", 0,0],
         $filename);
     ok ($image->xy(0,0),
         '*');
+  }
+}
+
+
+#------------------------------------------------------------------------------
+# save() / load() filename with space
+
+{
+  my $filename = ' tempspace.tmp';
+  unlink $filename;
+  END { unlink $filename; }
+  MyTestHelpers::diag("test file '$filename'");
+
+  # save file
+  {
+    my $image = Image::Base::Text->new (-width => 1, -height => 1);
+    $image->save ($filename);
+    ok (-e $filename,
+        1,
+        "file '$filename' exists");
+    ok (-s $filename > 0,
+        1,
+        "file '$filename' not empty");
+  }
+  {
+    my $image = Image::Base::Text->new (-width => 1,
+                                        -height => 1,
+                                        -file => $filename);
   }
 }
 

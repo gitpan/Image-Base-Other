@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Image-Base-Other
-version:            5
+version:            6
 abstract:           Misc other helpers for Image::Base.
 author:
     - Kevin Ryde <user42@zip.com.au>
@@ -12,7 +12,7 @@ build_requires:
     ExtUtils::MakeMaker:  0
 requires:
     Image::Base:  1.12
-    perl:         5.004
+    perl:         5.006
     Test:         0
 resources:
     homepage:  http://user42.tuxfamily.org/image-base-other/index.html
@@ -21,8 +21,9 @@ no_index:
     directory:
         - t
         - inc
+        - xt
         - devel
-generated_by:       ExtUtils::MakeMaker version 6.55_02
+generated_by:       ExtUtils::MakeMaker version 6.56
 meta-spec:
     url:      http://module-build.sourceforge.net/META-spec-v1.4.html
     version:  1.4
@@ -36,7 +37,6 @@ optional_features:
     maximum_tests:
         description:  Have "make test" do as much as possible.
         requires:
-            File::Spec:          0
             File::Temp:          0.14
             Parse::CPAN::Meta:   0
             Test::DistManifest:  0

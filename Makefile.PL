@@ -34,8 +34,9 @@ MyMakeMakerExtras::WriteMakefile
                     'Image::Base' => '1.12',  # for ellipse() $fill
                     'Test' => 0,
                    },
-   # aiming for 5.004 same as Image::Base
-   MIN_PERL_VERSION => '5.004',
+   # maybe aiming for 5.004 same as Image::Base,
+   # though file open()s easier in 5.6
+   MIN_PERL_VERSION => '5.006',
 
    META_MERGE =>
    { resources =>

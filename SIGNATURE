@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.66.
+signed via the Module::Signature module, version 0.68.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -15,40 +15,47 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 842745cb706f8f2126506f544492f7a80dbe29b3 COPYING
-SHA1 61e6ca885ff364a11a09fbb15359be00f6a74e8d Changes
-SHA1 97e3538691630d688421b33a9490730b8b1a1c9a MANIFEST
-SHA1 6c771cc4b0718f7bc9c9af01889700d7bce0a8e6 MANIFEST.SKIP
-SHA1 1a000c7520d8a6f8514e1867bcdf3445783ce7ea META.yml
-SHA1 0c929f8e5aa7d3c60a18fe1f472c2abffc2cb3d0 Makefile.PL
-SHA1 85b29eaa4bf027cb1372a9bb2e0b5655b9fc0567 debian/changelog
+SHA1 4eaea3fd8d5d832510073a434e05687360bf2007 Changes
+SHA1 249b885b105bebdc7a3426cbac0029ee94a294ac MANIFEST
+SHA1 1d745ef4cc154d3b13bfee6d1048ac4135fc1aa7 MANIFEST.SKIP
+SHA1 b7cf51679c6ca3274a50802adfe8c0ece0445425 META.yml
+SHA1 0a89d3b30e52e70675e971266083ed62280a3e21 Makefile.PL
+SHA1 3a92fb20ba9d22a91dbe80727f4e851f77acb552 debian/changelog
 SHA1 ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4 debian/compat
-SHA1 3e86459466a968bf18fb9035abaf3198b50640a6 debian/control
+SHA1 3c39fa3fa9d508c463bbc287617d763aca1973c2 debian/control
 SHA1 2cd7698b0b51c736379e32b89375d06f38e1b0f7 debian/copyright
 SHA1 c0f4888892af4f23e0247d5de0c388efa7ce9211 debian/rules
 SHA1 61652cd1568dcf2614df833eba241755eee34e89 debian/source/format
 SHA1 2b6cd9b551b003c08b1056f29b46c5e00b650153 debian/watch
+SHA1 15aa74d77f77a5e7dbae04fbb3eb97c4e688b9aa devel/image-svgout.pl
 SHA1 cd3b50153d7c5867b128de7cbc89b9785f427f13 devel/run.pl
 SHA1 aa5d7b9160e3a3969a72e7f15427184e2f6f66fc devel/unused.pl
-SHA1 cf647ee28a7aaad9896d0063f8a2529919ccfcd3 inc/MyMakeMakerExtras.pm
+SHA1 d34492ea04ab0f004fbb3c5ca8a6bd42a216844e inc/MyMakeMakerExtras.pm
 SHA1 7a988b2aa7ed09f1cb9029a1ef3f0e2139dca0cf inc/my_pod2html
-SHA1 34d3d5f0832476c1b69b7b26a0810cb9fc974a45 lib/Image/Base/Multiplex.pm
-SHA1 ee8aab954ba43df1cdd1695149bb1d5f55e3388b lib/Image/Base/Text.pm
-SHA1 d446053346aa58d2b431a21e7d92ce184c7f59f1 t/Multiplex-load.t
-SHA1 877f06bcfec753631d91206b1d7201069c41ed23 t/Multiplex.t
-SHA1 36b8eba56c87d62b1b41959187c717577dc16fa5 t/MyTestHelpers.pm
-SHA1 a75f20cb81375b7fe648fdcdf217a19f05b80e41 t/MyTestImageBase.pm
-SHA1 ff0317211f4ce4ca803109175d00a220ebc84aae t/Text-load.t
+SHA1 05857d73997d41d19823481db150283c9457417d lib/Image/Base/Multiplex.pm
+SHA1 ecaea522b5f85e77d8bf207ca5af8b7f9d2a222b lib/Image/Base/SVGout.pm
+SHA1 4bb00eedfecd5f07f0447e2a7f2ef462da075eb5 lib/Image/Base/Text.pm
+SHA1 d446053346aa58d2b431a21e7d92ce184c7f59f1 t/Multiplex-use.t
+SHA1 47cad38a40a657c3ddad5d678ab1cb2605a1aee6 t/Multiplex.t
+SHA1 65d2aa91962fc56276be57bfdca4ad56ab6a4309 t/MyTestHelpers.pm
+SHA1 f8f2cbe776f36e84221ffaf74aebf0be4496582f t/MyTestImageBase.pm
+SHA1 39601f2d253dcc3c72d547546b101a0d468023e2 t/SVGout-use.t
+SHA1 22cddf07f29bb4d9c0e0eb5a08fcfc3612018509 t/SVGout.t
+SHA1 ff0317211f4ce4ca803109175d00a220ebc84aae t/Text-use.t
 SHA1 ffdd7f78e938b4ce3bc8ce3390b4b6874ee1099e t/Text-weaken.t
-SHA1 9de7e9ba9c464e3bd4a8feeaf3432268a27ec045 t/Text.t
+SHA1 3f860966aba60e010edf4e074857062a641d71eb t/Text.t
 SHA1 0279c9310ec528d10a2a14e602bf98f1c776cce1 xt/0-META-read.t
+SHA1 219395eb91b03829e6f14db4ebd57d88ea972e61 xt/0-Test-ConsistentVersion.t
 SHA1 8a5e0f34131de34e584fbb1939c191a152566155 xt/0-Test-DistManifest.t
 SHA1 cc04a5fe5d8b8b38bfd56453d5d2686c8ea58783 xt/0-Test-Pod.t
 SHA1 8cc52e23427a82cfef5802bf512b13c65de2687a xt/0-Test-Synopsis.t
 SHA1 4c14845872d6eb4280e12f862d6ba2c343358c60 xt/0-Test-YAML-Meta.t
+SHA1 c03e001ac27b9cb5954174852eb3087d758334d2 xt/0-file-is-part-of.t
+SHA1 daba2840c7f128371d42516619a0e04fee2f5ff4 xt/0-no-debug-left-on.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iD8DBQFNUIxzLFMCIV9q3ToRArXnAJ9FgkxIlzrHdm9GvdoePRhatEEi0wCeMMPt
-nO+Fl4AyRICpPFnku2gvyWA=
-=VaK+
+iD8DBQFODnL7LFMCIV9q3ToRAhOJAJ9e1TyufmC+tc7crekYp+2+8srjHACeIZ7M
+1BbrnZ8Js6lhLMJg19tf6jw=
+=/bTA
 -----END PGP SIGNATURE-----

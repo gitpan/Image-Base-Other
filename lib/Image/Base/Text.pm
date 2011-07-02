@@ -17,13 +17,15 @@
 
 
 package Image::Base::Text;
-use 5.004;  # maybe one day 5.005 for 4-arg substr() replacing
+# maybe one day 5.005 for 4-arg substr() replacing
+# 5.6 for easier clean open()
+use 5.006;
 use strict;
 use Carp;
 use Text::Tabs ();
 use vars '$VERSION', '@ISA';
 
-$VERSION = 5;
+$VERSION = 6;
 
 use Image::Base 1.12; # version 1.12 for ellipse() $fill
 @ISA = ('Image::Base');
@@ -113,9 +115,9 @@ sub load {
   }
   ### $filename
 
-  open FH, "<$filename" or croak "Cannot open $filename: $!";
-  $self->load_fh (\*FH);
-  close FH or croak "Error closing $filename: $!";
+  open my $fh, '<', $filename or croak "Cannot open $filename: $!";
+  $self->load_fh ($fh);
+  close $fh or croak "Error closing $filename: $!";
 }
 
 # these undocumented yet ...
@@ -162,9 +164,10 @@ sub save {
   }
   ### $filename
 
-  (open FH, "> $filename"
-   and $self->save_fh(\*FH)
-   and close FH)
+  my $fh;
+  (open $fh, '>', $filename
+   and $self->save_fh($fh)
+   and close $fh)
     or croak "Error writing $filename: $!";
 }
 
@@ -189,7 +192,7 @@ sub xy {
   return if ($x < 0 || $x >= $self->{'-width'}
              || $y < 0 || $y >= @{$self->{'-rows_array'}});
 
-  for my $row ($self->{'-rows_array'}->[$y]) {
+  foreach my $row ($self->{'-rows_array'}->[$y]) {
     if (@_ == 3) {
       return $self->character_to_colour (substr ($row, $x, 1));
     }
@@ -224,9 +227,9 @@ sub rectangle {
   if (! $fill) {
     # sides, unfilled
     my @x = ($x1, ($x1 != $x2 ? $x2 : ()));
-    for my $y ($y1+1 .. $y2-1) {
-      for my $row ($rows_array->[$y]) {
-        for my $x (@x) {
+    foreach my $y ($y1+1 .. $y2-1) {
+      foreach my $row ($rows_array->[$y]) {
+        foreach my $x (@x) {
           substr ($row, $x, 1) = $char;
         }
       }
