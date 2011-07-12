@@ -21,7 +21,7 @@ use 5.004;
 use strict;
 use Test;
 BEGIN {
-  plan tests => 1553;
+  plan tests => 1529;
 }
 
 use lib 't';
@@ -36,7 +36,7 @@ MyTestHelpers::diag("Image::Base version ", Image::Base->VERSION);
 # VERSION
 
 {
-  my $want_version = 6;
+  my $want_version = 7;
   ok ($Image::Base::Text::VERSION, $want_version, 'VERSION variable');
   ok (Image::Base::Text->VERSION,  $want_version, 'VERSION class method');
 

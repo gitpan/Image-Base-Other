@@ -392,12 +392,16 @@ sub check_ellipse {
       $image->rectangle (0,0, $width-1,$height-1, $black, 1);
       $image->ellipse ($x1,$y1, $x2,$y2, $white, @$fillaref);
 
-      my $bad = (some_hline ($image, $x1,$x2, $y1, $white_expect, $name)
-                 + some_hline ($image, $x1,$x2, $y2, $white_expect, $name)
-                 + some_vline ($image, $x1, $y1,$y2, $white_expect, $name)
-                 + some_vline ($image, $x2, $y1,$y2, $white_expect, $name)
-                 + is_rect ($image, $x1-1,$y1-1, $x2+1,$y2+1, $black, $name)
-                );
+      my $bad = some_hline ($image, $x1,$x2, $y1, $white_expect, $name);
+      if ($y2 != $y1) {
+        $bad += some_hline ($image, $x1,$x2, $y2, $white_expect, $name);
+      }
+      $bad += some_vline ($image, $x1, $y1,$y2, $white_expect, $name);
+      if ($x2 != $x1) {
+        $bad += some_vline ($image, $x2, $y1,$y2, $white_expect, $name);
+      }
+      $bad += is_rect ($image, $x1-1,$y1-1, $x2+1,$y2+1, $black, $name);
+
       if ($fill) {
         $bad += (all_hline ($image, $x1,$x2, int(($y1+$y2)/2), $white_expect,$name)
                  + all_hline ($image, $x1,$x2, int(($y1+$y2+1)/2), $white_expect,$name)
@@ -410,13 +414,62 @@ sub check_ellipse {
   }
 }
 
+sub check_diamond {
+  my ($image, %options) = @_;
+
+  my ($width, $height) = $image->get('-width','-height');
+  local $white_expect = $white_expect || $white;
+
+  my $elem;
+  foreach $elem (@sizes) {
+    my ($x1,$y1, $x2,$y2) = @$elem;
+
+    my $fillaref;
+    foreach $fillaref ([],
+                       ($options{'skip_fill'} ? () : ([1])),
+                      ) {
+      my $fill = ($fillaref->[0] || 0);
+      my $name = "diamond $x1,$y1, $x2,$y2, fill=$fill";
+      # MyTestHelpers::diag($name);
+
+      $image->rectangle (0,0, $width-1,$height-1, $black, 1);
+      $image->diamond ($x1,$y1, $x2,$y2, $white, @$fillaref);
+
+      my $bad;
+
+      if ($options{'pngwriter_exceptions'} && $fill) {
+        # dodgy top line of filled filleddiamond()
+      } else {
+        $bad = some_hline ($image, $x1,$x2, $y1, $white_expect, $name);
+      }
+      if ($y2 != $y1) {
+        $bad += some_hline ($image, $x1,$x2, $y2, $white_expect, $name);
+      }
+
+      if ($options{'pngwriter_exceptions'}
+          && $fill && $x1+1==$x2 && $y1+1==$y2) {
+        # dodgy left side of 2x2 filleddiamond()
+      } else {
+        $bad += some_vline ($image, $x1, $y1,$y2, $white_expect, $name);
+      }
+      if ($x2 != $x1) {
+        $bad += some_vline ($image, $x2, $y1,$y2, $white_expect, $name);
+      }
+
+      $bad += is_rect ($image, $x1-1,$y1-1, $x2+1,$y2+1, $black, $name);
+
+      if ($bad) { dump_image($image); }
+    }
+  }
+}
+
 sub check_image {
-  my ($image, @options) = @_;
+  my ($image, %options) = @_;
   local $white_expect = $white_expect || $white;
 
   check_line ($image);
   check_rectangle ($image);
-  check_ellipse ($image, @options);
+  check_ellipse ($image, %options);
 }
 
 1;

@@ -16,6 +16,9 @@ You can get a copy of the GNU General Public License online at
 <http://www.gnu.org/licenses/>.
 
 
+Version 7, July 2011
+    - SVGout,Multiplex new diamond()
+
 Version 6, July 2011
     - Text allow filenames with leading spaces
     - new Image::Base::SVGout

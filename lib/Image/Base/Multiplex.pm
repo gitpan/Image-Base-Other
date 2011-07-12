@@ -22,7 +22,7 @@ use strict;
 use Carp;
 use vars '$VERSION', '@ISA';
 
-$VERSION = 6;
+$VERSION = 7;
 
 use Image::Base;
 @ISA = ('Image::Base');
@@ -117,6 +117,9 @@ sub rectangle {
 sub ellipse {
   foreach my $image (@{shift->{'-images'}}) { $image->ellipse(@_); }
 }
+sub diamond {
+  foreach my $image (@{shift->{'-images'}}) { $image->diamond(@_); }
+}
 
 sub add_colours {
   foreach my $image (@{shift->{'-images'}}) {
@@ -209,6 +212,8 @@ Or start empty and set some C<-images> later
 =item C<$image-E<gt>rectangle (...)>
 
 =item C<$image-E<gt>ellipse (...)>
+
+=item C<$image-E<gt>diamond (...)>
 
 These calls are passed through to each target image.
 

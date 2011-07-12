@@ -26,8 +26,8 @@ use Smart::Comments;
 my $filename = '/tmp/x.svg';
 
 {
-  require App::MathImage::Image::Base::SVGout;
-  my $image = App::MathImage::Image::Base::SVGout->new (-width => 400,
+  require Image::Base::SVGout;
+  my $image = Image::Base::SVGout->new (-width => 400,
                                                         -height => 400);
   $image->set(-file => $filename);
   $image->set(-title => "blah \x{2022} blah");
@@ -41,6 +41,9 @@ my $filename = '/tmp/x.svg';
   $image->ellipse (230,240, 280,290, 'red', 1);
 
   $image->line (30,340, 380,390, 'white', 1);
+
+  $image->diamond (330,40, 380,90, 'pink', 0);
+  $image->diamond (330,140, 380,190, 'pink', 1);
 
   $image->save($filename);
   system ("cat $filename");

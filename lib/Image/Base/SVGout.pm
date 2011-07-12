@@ -25,7 +25,7 @@ use vars '$VERSION', '@ISA';
 use Image::Base;
 @ISA = ('Image::Base');
 
-$VERSION = 6;
+$VERSION = 7;
 
 # uncomment this to run the ### lines
 #use Devel::Comments '###';
@@ -200,7 +200,7 @@ sub rectangle {
   my ($self, $x1,$y1, $x2,$y2, $colour, $fill) = @_;
   ### Image-Base-SVGout rectangle(): @_[1 .. $#_]
 
-  $fill ||= ($x1 == $x2 || $y1 == $y2);
+  $fill ||= ($x1 == $x2 || $y1 == $y2);  # 1xN or Nx1 done filled
   if (! $fill) {
     $x1 += .5;  # for stroke width 1
     $y1 += .5;
@@ -220,7 +220,7 @@ sub ellipse {
   my ($self, $x1,$y1, $x2,$y2, $colour, $fill) = @_;
   ### Image-Base-SVGout rectangle(): @_[1 .. $#_]
 
-  $fill ||= ($x1 == $x2 || $y1 == $y2);
+  $fill ||= ($x1 == $x2 || $y1 == $y2);  # 1xN or Nx1 done filled
   my $rx = ($x2-$x1+1) / 2;
   my $ry = ($y2-$y1+1) / 2;
   if (! $fill) {
@@ -246,6 +246,31 @@ sub line {
         '" y2="', $y2+.5,
         '" stroke="', _entitize($colour),
         '" stroke-linecap="square"/>');
+}
+
+sub diamond {
+  my ($self, $x1,$y1, $x2,$y2, $colour, $fill) = @_;
+  ### Image-Base-SVGout diamond(): @_[1 .. $#_]
+
+  $fill ||= ($x1 == $x2 || $y1 == $y2);  # 1xN or Nx1 done filled
+  if ($fill) {
+    $x2++;
+    $y2++;
+  } else {
+    $x1 += .5;  # for stroke width 1
+    $y1 += .5;
+    $x2 += .5;
+    $y2 += .5;
+  }
+  my $xm = ($x1+$x2)/2;
+  my $ym = ($y1+$y2)/2;
+  _out ($self,
+        '<polygon points="',
+        $xm,',',$y1,' ',
+        $x1,',',$ym,' ',
+        $xm,',',$y2,' ',
+        $x2,',',$ym,'" ',
+        ($fill?'fill':'stroke'),'="', _entitize($colour), '"/>');
 }
 
 sub load {

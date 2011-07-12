@@ -25,7 +25,7 @@ use Carp;
 use Text::Tabs ();
 use vars '$VERSION', '@ISA';
 
-$VERSION = 6;
+$VERSION = 7;
 
 use Image::Base 1.12; # version 1.12 for ellipse() $fill
 @ISA = ('Image::Base');

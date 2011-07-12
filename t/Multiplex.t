@@ -21,7 +21,7 @@ use 5.004;
 use strict;
 use Test;
 BEGIN {
-  plan tests => 2297;
+  plan tests => 2273;
 }
 
 use lib 't';
@@ -35,7 +35,7 @@ require Image::Base::Multiplex;
 # VERSION
 
 {
-  my $want_version = 6;
+  my $want_version = 7;
   ok ($Image::Base::Multiplex::VERSION, $want_version, 'VERSION variable');
   ok (Image::Base::Multiplex->VERSION,  $want_version, 'VERSION class method');
 
