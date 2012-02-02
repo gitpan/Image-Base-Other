@@ -1,6 +1,6 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -32,6 +32,7 @@ MyMakeMakerExtras::WriteMakefile
    SIGN         => 1,
    PREREQ_PM    => {
                     'Image::Base' => '1.12',  # for ellipse() $fill
+                    'List::Util' => 0,
                     'Test' => 0,
                    },
    # maybe aiming for 5.004 same as Image::Base,
@@ -41,6 +42,7 @@ MyMakeMakerExtras::WriteMakefile
    META_MERGE =>
    { resources =>
      { homepage => 'http://user42.tuxfamily.org/image-base-other/index.html',
+       license  => 'http://www.gnu.org/licenses/gpl.html',
      },
      optional_features =>
      {
@@ -49,11 +51,6 @@ MyMakeMakerExtras::WriteMakefile
         requires => { # Test::Weaken 2.002 for "ignore"
                      'Test::Weaken' => '2.002',
                      'File::Temp' => '0.14',
-                    },
-      },
-      maximum_devel =>
-      { description => 'Stuff used variously for development.',
-        requires => { 'Smart::Comments'     => 0,
                     },
       },
      },

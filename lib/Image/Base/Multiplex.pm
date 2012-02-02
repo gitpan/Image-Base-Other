@@ -1,4 +1,4 @@
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -22,7 +22,7 @@ use strict;
 use Carp;
 use vars '$VERSION', '@ISA';
 
-$VERSION = 7;
+$VERSION = 8;
 
 use Image::Base;
 @ISA = ('Image::Base');
@@ -246,7 +246,7 @@ http://user42.tuxfamily.org/image-base-other/index.html
 
 =head1 LICENSE
 
-Image-Base-Other is Copyright 2010, 2011 Kevin Ryde
+Image-Base-Other is Copyright 2010, 2011, 2012 Kevin Ryde
 
 Image-Base-Other is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as published by

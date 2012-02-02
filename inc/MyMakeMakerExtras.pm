@@ -1,6 +1,6 @@
 # MyMakeMakerExtra.pm -- my shared MakeMaker extras
 
-# Copyright 2009, 2010, 2011 Kevin Ryde
+# Copyright 2009, 2010, 2011, 2012 Kevin Ryde
 
 # MyMakeMakerExtras.pm is shared by several distributions.
 #
@@ -16,6 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with this file.  If not, see <http://www.gnu.org/licenses/>.
+
 
 package MyMakeMakerExtras;
 use strict;
@@ -36,11 +37,6 @@ sub WriteMakefile {
         push @{$opts{'META_MERGE'}->{'no_index'}->{'directory'}}, $dir;
       }
     }
-
-    $opts{'META_MERGE'}->{'resources'}->{'license'}
-      ||= 'http://www.gnu.org/licenses/gpl.html';
-    _meta_merge_shared_tests (\%opts);
-    _meta_merge_shared_devel (\%opts);
   }
 
   if (! defined $opts{'clean'}->{'FILES'}) {
@@ -79,41 +75,6 @@ sub strip_comments {
 #------------------------------------------------------------------------------
 # META_MERGE
 
-sub _meta_merge_shared_tests {
-  my ($opts) = @_;
-  if (-e 'xt/0-Test-Pod.t') {
-    _meta_merge_req_add (_meta_merge_maximum_tests($opts),
-                         'Test::Pod' => '1.00');
-  }
-  if (-e 'xt/0-Test-DistManifest.t') {
-    _meta_merge_req_add (_meta_merge_maximum_tests($opts),
-                         'Test::DistManifest' => 0);
-  }
-  if (-e 'xt/0-Test-Synopsis.t') {
-    _meta_merge_req_add (_meta_merge_maximum_tests($opts),
-                         'Test::Synopsis' => 0);
-  }
-  if (-e 'xt/0-Test-YAML-Meta.t') {
-    _meta_merge_req_add (_meta_merge_maximum_tests($opts),
-                         'Test::YAML::Meta' => '0.15');
-  }
-  if (-e 'xt/0-META-read.t') {
-    if (_min_perl_version_lt ($opts, 5.00307)) {
-      _meta_merge_req_add (_meta_merge_maximum_tests($opts),
-                           'FindBin' => 0);
-    }
-    if (_min_perl_version_lt ($opts, 5.00405)) {
-      _meta_merge_req_add (_meta_merge_maximum_tests($opts),
-                           'File::Spec' => 0);
-    }
-    _meta_merge_req_add (_meta_merge_maximum_tests($opts),
-                         'YAML'              => 0,
-                         'YAML::Syck'        => 0,
-                         'YAML::Tiny'        => 0,
-                         'YAML::XS'          => 0,
-                         'Parse::CPAN::Meta' => 0);
-  }
-}
 # return hashref of "maximum_tests" under $opts, created if necessary
 sub _meta_merge_maximum_tests {
   my ($opts) = @_;
@@ -122,31 +83,6 @@ sub _meta_merge_maximum_tests {
       requires => { },
     };
   return $opts->{'META_MERGE'}->{'optional_features'}->{'maximum_tests'}->{'requires'};
-}
-
-sub _meta_merge_shared_devel {
-  my ($opts) = @_;
-  _meta_merge_req_add (_meta_merge_maximum_devel($opts),
-                       # the "make unused" target below
-                       'warnings::unused' => 0);
-  _meta_merge_req_add (_meta_merge_maximum_devel($opts),
-                       # used a lot
-                       'Smart::Comments' => 0);
-  if (-e 'inc/my_pod2html') {
-    if (_min_perl_version_lt ($opts, 5.009003)) {
-      _meta_merge_req_add (_meta_merge_maximum_devel($opts),
-                           'Pod::Simple::HTML' => 0);
-    }
-  }
-}
-# return hashref of "maximum_devel" under $opts, created if necessary
-sub _meta_merge_maximum_devel {
-  my ($opts) = @_;
-  $opts->{'META_MERGE'}->{'optional_features'}->{'maximum_devel'} ||=
-    { description => 'Stuff used variously for development.',
-      requires => { },
-    };
-  return $opts->{'META_MERGE'}->{'optional_features'}->{'maximum_devel'}->{'requires'};
 }
 
 # return true if MIN_PERL_VERSION in $opts is < $ver, or no MIN_PERL_VERSION
@@ -284,6 +220,10 @@ HERE
   $post .= <<'HERE';
 pc:
 HERE
+  # ------ pc: test vars ------
+  # the "." obscures it from MyExtractUse.pm
+  $post .= "\t-\$(PERLRUNINST) -e 'use "."Test::Vars; all_vars_ok()'\n";
+
   # ------ pc: podcoverage ------
   foreach (@{$my_options{'MyMakeMakerExtras_Pod_Coverage'}}) {
     my $class = $_;
@@ -300,26 +240,9 @@ HERE
 	-podchecker `ls $(LINT_FILES) | grep -v '\.bash$$|\.desktop$$\.png$$|\.xpm$$'`
 	perlcritic $(LINT_FILES)
 HERE
-  # ------ cpants_lint ------
-  $post .= <<'HERE';
-kw:
-	make $(DISTVNAME).tar.gz
-	-cpants_lint $(DISTVNAME).tar.gz
-HERE
 
-  # ------ unused ------
+  # ------ check-copyright-years ------
   $post .= <<'HERE';
-unused:
-	for i in $(LINT_FILES); do perl -Mwarnings::unused -I lib -c $$i; done
-
-HERE
-
-  # ------ myman ------
-  $post .= <<'HERE';
-myman:
-	-mv MANIFEST MANIFEST.old
-	touch SIGNATURE
-	(make manifest 2>&1; diff -u MANIFEST.old MANIFEST) |less
 
 # find files in the dist with mod times this year, but without this year in
 # the copyright line
@@ -358,7 +281,7 @@ check-copyright-years:
 	  exit $$result)
 
 check-spelling:
-	if find . -type f | egrep -v '(Makefile|dist-deb)' | xargs egrep --color=always -nHi '[a]djustement|[g]lpyh|[r]ectanglar|[a]vailabe|[g]rabing|[c]usor|[r]efering|[w]riteable|[n]ineth|\b[o]mmitt?ed|[o]mited|[$$][rd]elf|[r]equrie|[n]oticable|[c]ontinous|[e]xistant|[e]xplict|[a]gument|[d]estionation|\b[t]he the\b|\b[i]n in\b|\b[tw]hen then\b|\b[n]ote sure\b'; \
+	if find . -type f | egrep -v '(Makefile|dist-deb)' | xargs egrep --color=always -nHi '\b[t]o to\b|[t]ranpose|[a]djustement|[g]lpyh|[r]ectanglar|[a]vailabe|[g]rabing|[c]usor|[r]efering|[w]riteable|[n]ineth|\b[o]mmitt?ed|[o]mited|[$$][rd]elf|[r]equrie|[n]oticable|[c]ontinous|[e]xistant|[e]xplict|[a]gument|[d]estionation|\b[t]he the\b|\b[w]ith with\b|\b[i]n in\b|\b[tw]hen then\b|\b[n]ote sure\b|[c]orrespondance|[s]prial'; \
 	then false; else true; fi
 HERE
 
@@ -447,7 +370,7 @@ lintian-source:
 	mv -T $(DISTVNAME) $(DEBNAME)-$(VERSION); \
 	dpkg-source -b $(DEBNAME)-$(VERSION) \
 	               $(DEBNAME)_$(VERSION).orig.tar.gz; \
-	lintian -I -i --suppress-tags empty-debian-diff *.dsc; \
+	lintian -I -i --suppress-tags empty-debian-diff,debian-rules-uses-deprecated-makefile *.dsc; \
 	cd ..; \
 	rm -rf temp-lintian
 
@@ -480,3 +403,81 @@ HERE
 
 1;
 __END__
+
+
+
+
+# Old stuff:
+
+# # return hashref of "maximum_devel" under $opts, created if necessary
+# sub _meta_merge_maximum_devel {
+#   my ($opts) = @_;
+#   $opts->{'META_MERGE'}->{'optional_features'}->{'maximum_devel'} ||=
+#     { description => 'Stuff used variously for development.',
+#       requires => { },
+#     };
+#   return $opts->{'META_MERGE'}->{'optional_features'}->{'maximum_devel'}->{'requires'};
+# }
+
+#     _meta_merge_shared_devel (\%opts);
+# sub _meta_merge_shared_devel {
+#   my ($opts) = @_;
+#   if (exists $opts->{'META_MERGE'}->{'optional_features'}->{'maximum_devel'}) {
+#     _meta_merge_req_add (_meta_merge_maximum_devel($opts),
+#                          # the "make unused" target below
+#                          'warnings::unused' => 0);
+#     _meta_merge_req_add (_meta_merge_maximum_devel($opts),
+#                          # used a lot
+#                          'Smart::Comments' => 0,
+#                          'Devel::Comments' => 0);
+#     if (-e 'inc/my_pod2html') {
+#       if (_min_perl_version_lt ($opts, 5.009003)) {
+#         _meta_merge_req_add (_meta_merge_maximum_devel($opts),
+#                              'Pod::Simple::HTML' => 0);
+#       }
+#     }
+#   }
+# }
+
+
+    # _meta_merge_shared_tests (\%opts);
+# sub _meta_merge_shared_tests {
+#   my ($opts) = @_;
+# 
+#   if (exists $opts->{'META_MERGE'}->{'optional_features'}->{'maximum_devel'}) {
+#     # only if "maximum_devel" in use
+# 
+#     if (-e 'xt/0-Test-Pod.t') {
+#       _meta_merge_req_add (_meta_merge_maximum_devel($opts),
+#                            'Test::Pod' => '1.00');
+#     }
+#     if (-e 'xt/0-Test-DistManifest.t') {
+#       _meta_merge_req_add (_meta_merge_maximum_devel($opts),
+#                            'Test::DistManifest' => 0);
+#     }
+#     if (-e 'xt/0-Test-Synopsis.t') {
+#       _meta_merge_req_add (_meta_merge_maximum_devel($opts),
+#                            'Test::Synopsis' => 0);
+#     }
+#     if (-e 'xt/0-Test-YAML-Meta.t') {
+#       _meta_merge_req_add (_meta_merge_maximum_devel($opts),
+#                            'Test::YAML::Meta' => '0.15');
+#     }
+#     if (-e 'xt/0-META-read.t') {
+#       if (_min_perl_version_lt ($opts, 5.00307)) {
+#         _meta_merge_req_add (_meta_merge_maximum_devel($opts),
+#                              'FindBin' => 0);
+#       }
+#       if (_min_perl_version_lt ($opts, 5.00405)) {
+#         _meta_merge_req_add (_meta_merge_maximum_devel($opts),
+#                              'File::Spec' => 0);
+#       }
+#       _meta_merge_req_add (_meta_merge_maximum_devel($opts),
+#                            'YAML'              => 0,
+#                            'YAML::Syck'        => 0,
+#                            'YAML::Tiny'        => 0,
+#                            'YAML::XS'          => 0,
+#                            'Parse::CPAN::Meta' => 0);
+#     }
+#   }
+# }

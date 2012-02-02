@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -20,9 +20,7 @@
 use 5.004;
 use strict;
 use Test;
-BEGIN {
-  plan tests => 1529;
-}
+plan tests => 2021;
 
 use lib 't';
 use MyTestHelpers;
@@ -36,7 +34,7 @@ MyTestHelpers::diag("Image::Base version ", Image::Base->VERSION);
 # VERSION
 
 {
-  my $want_version = 7;
+  my $want_version = 8;
   ok ($Image::Base::Text::VERSION, $want_version, 'VERSION variable');
   ok (Image::Base::Text->VERSION,  $want_version, 'VERSION class method');
 
@@ -267,8 +265,7 @@ foreach my $elem (["", 0,0],
 # line
 
 {
-  my $image = Image::Base::Text->new (-width => 20,
-                                                      -height => 10);
+  my $image = Image::Base::Text->new (-width => 20, -height => 10);
   $image->rectangle (0,0, 19,9, ' ', 1);
   $image->line (5,5, 7,7, '*', 0);
   ok ($image->xy (4,4), ' ');
@@ -279,8 +276,7 @@ foreach my $elem (["", 0,0],
   ok ($image->xy (8,8), ' ');
 }
 {
-  my $image = Image::Base::Text->new (-width => 20,
-                                                      -height => 10);
+  my $image = Image::Base::Text->new (-width => 20, -height => 10);
   $image->rectangle (0,0, 19,9, ' ', 1);
   $image->line (0,0, 2,2, '*', 1);
   ok ($image->xy (0,0), '*');
@@ -288,6 +284,68 @@ foreach my $elem (["", 0,0],
   ok ($image->xy (2,1), ' ');
   ok ($image->xy (3,3), ' ');
 }
+
+{
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+  $image->line (3,3, -1,-1, '*');
+  ok ($image->save_string, <<'HERE');
+*_________
+_*________
+__*_______
+___*______
+__________
+HERE
+}
+{
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+   $image->line (-2,1, 2,1, '*');  # horizontal
+  ok ($image->save_string, <<'HERE');
+__________
+***_______
+__________
+__________
+__________
+HERE
+}
+{
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+  $image->line (6,2, 10,2, '*', 1);
+  ok ($image->save_string, <<'HERE');
+__________
+__________
+______****
+__________
+__________
+HERE
+}
+{
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+  $image->line (3,-1, 6,-1, '*', 1);  # horizontal, Y negative
+  ok ($image->save_string, <<'HERE');
+__________
+__________
+__________
+__________
+__________
+HERE
+}
+{
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+  $image->line (3,5, 6,5, '*', 1);
+  ok ($image->save_string, <<'HERE');
+__________
+__________
+__________
+__________
+__________
+HERE
+}
+
 
 #------------------------------------------------------------------------------
 # xy
@@ -327,13 +385,100 @@ foreach my $elem (["", 0,0],
 }
 {
   my $image = Image::Base::Text->new (-width => 20,
-                                                      -height => 10);
+                                      -height => 10);
   $image->rectangle (0,0, 19,9, ' ', 1);
   $image->rectangle (0,0, 2,2, '*', 1);
   ok ($image->xy (0,0), '*');
   ok ($image->xy (1,1), '*');
   ok ($image->xy (2,1), '*');
   ok ($image->xy (3,3), ' ');
+}
+
+foreach my $fill (0, 1) {
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+  $image->rectangle (-1,2, 3,2, '*', $fill);
+  ok ($image->save_string, <<'HERE');
+__________
+__________
+****______
+__________
+__________
+HERE
+}
+
+foreach my $fill (0, 1) {
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+  $image->rectangle (7,2, 1000,2, '*', $fill);
+  ok ($image->save_string, <<'HERE');
+__________
+__________
+_______***
+__________
+__________
+HERE
+}
+
+{
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+  $image->rectangle (-1,-1, 4,2, '*'); # unfilled
+  ok ($image->save_string, <<'HERE');
+____*_____
+____*_____
+*****_____
+__________
+__________
+HERE
+}
+{
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+  $image->rectangle (-1,0, 4,2, '*'); # unfilled
+  ok ($image->save_string, <<'HERE');
+*****_____
+____*_____
+*****_____
+__________
+__________
+HERE
+}
+foreach my $fill (0, 1) {
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+  $image->rectangle (0,-1, 1,3, '*', $fill);
+  ok ($image->save_string, <<'HERE');
+**________
+**________
+**________
+**________
+__________
+HERE
+}
+{
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+  $image->rectangle (7,1, 10,5, '*', 1); # filled
+  ok ($image->save_string, <<'HERE');
+__________
+_______***
+_______***
+_______***
+_______***
+HERE
+}
+{
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+  $image->rectangle (7,1, 10,5, '*'); # unfilled
+  ok ($image->save_string, <<'HERE');
+__________
+_______***
+_______*__
+_______*__
+_______*__
+HERE
 }
 
 #------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-# Copyright 2011 Kevin Ryde
+# Copyright 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -25,7 +25,7 @@ use vars '$VERSION', '@ISA';
 use Image::Base;
 @ISA = ('Image::Base');
 
-$VERSION = 7;
+$VERSION = 8;
 
 # uncomment this to run the ### lines
 #use Devel::Comments '###';
@@ -344,6 +344,9 @@ object.
 
 =head1 FUNCTIONS
 
+See L<Image::Base/FUNCTIONS> for the behaviour common to all Image-Base
+classes.
+
 =over 4
 
 =item C<$image = Image::Base::SVGout-E<gt>new (key=E<gt>value,...)>
@@ -402,7 +405,7 @@ http://user42.tuxfamily.org/image-base-other/index.html
 
 =head1 LICENSE
 
-Image-Base-Other is Copyright 2010, 2011 Kevin Ryde
+Image-Base-Other is Copyright 2010, 2011, 2012 Kevin Ryde
 
 Image-Base-Other is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as published by

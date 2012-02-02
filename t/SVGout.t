@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2011 Kevin Ryde
+# Copyright 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -36,7 +36,7 @@ MyTestHelpers::diag("Image::Base version ", Image::Base->VERSION);
 # VERSION
 
 {
-  my $want_version = 7;
+  my $want_version = 8;
   ok ($Image::Base::SVGout::VERSION, $want_version, 'VERSION variable');
   ok (Image::Base::SVGout->VERSION,  $want_version, 'VERSION class method');
 

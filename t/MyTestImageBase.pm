@@ -1,6 +1,6 @@
 # MyTestImageBase.pm -- some tests for Image::Base subclasses
 
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # MyTestImageBase.pm is shared by several distributions.
 #
@@ -34,7 +34,10 @@ $skip = undef;
 $handle_input = sub {};
 
 # uncomment this to run the ### lines
-#use Smart::Comments;
+#use Devel::Comments;
+
+use vars '@CARP_NOT';
+@CARP_NOT = ('Test');
 
 sub min {
   my $ret = shift;
@@ -59,7 +62,7 @@ sub max {
 
 sub is {
   &$handle_input();
-  if (Test::More->can('is')) {
+  if (eval { Test::More->can('is') }) {
     if (defined $skip) {
     SKIP: {
         &Test::More::skip ($skip, 1); # no prototypes
@@ -92,6 +95,7 @@ sub dump_image {
   if (defined $skip) {
     return;
   }
+  require MyTestHelpers;
   my $width = $image->get('-width');
   my $height = $image->get('-height');
   MyTestHelpers::diag("dump_image");
@@ -100,14 +104,40 @@ sub dump_image {
     my $str = '';
     my $x;
     foreach $x (0 .. $width-1) {
-      my $colour = mung_colour($image->xy($x,$y));
-      if ($colour eq $black) {
-        $str .= '_';
+      my $colour = $image->xy($x,$y);
+      if (! defined $colour) {
+        $str .= 'U';
       } else {
-        $str .= substr ($colour, 0,1);
+        $colour = mung_colour($colour);
+        if ($colour eq $black) {
+          $str .= '_';
+        } else {
+          $str .= substr ($colour, 0,1);
+        }
       }
     }
     MyTestHelpers::diag($str);
+  }
+
+  if (my $canvas = $image->get('-tkcanvas')) {
+    my @items = $canvas->find('all');
+    MyTestHelpers::diag("item count ",scalar(@items));
+    my $item;
+    foreach $item (@items) {
+      my $type = $canvas->type($item);
+      my @coords = $canvas->coords($item);
+      my @opts;
+      my $spec;
+      foreach $spec ($canvas->itemconfigure($item)) {
+        my $key = $spec->[0];
+        if ($key eq '-fill') {
+          my $value = $canvas->itemcget($item,$key);
+          if (! defined $value) { $value = '[undef]'; }
+          push @opts, " $key=$value";
+        }
+      }
+      MyTestHelpers::diag("item $item $type @opts ",join(',',@coords));
+    }
   }
 }
 
@@ -283,23 +313,74 @@ my @sizes = ([0,0, 0,0],    # 1x1
              [1,1, 18,8],   # big
             );
 
+sub check_xy {
+  my ($image, %options) = @_;
+  my $big_fetch_expect = $options{'big_fetch_expect'};
+
+  my $big_negative = -2**16 + 2;
+  # exercise some negatives
+  $image->xy ($big_negative,0, $white);
+  $image->xy (0,$big_negative, $white);
+  $image->xy ($big_negative,$big_negative, $white);
+  is (scalar($image->xy($big_negative,$big_negative)), $big_fetch_expect,
+      'xy() negative fetch');
+  is (scalar($image->xy(0,$big_negative)), $big_fetch_expect,
+      'xy() negative fetch');
+  is (scalar($image->xy($big_negative,0)), $big_fetch_expect,
+      'xy() negative fetch');
+
+  my $big_positive = 2**16 + 2;
+  $image->xy ($big_positive,$big_positive, $white);
+  $image->xy (0,$big_positive, $white);
+  $image->xy ($big_positive,0, $white);
+  is (scalar($image->xy(0,$big_positive)), $big_fetch_expect,
+      'xy() big positive fetch');
+  is (scalar($image->xy($big_positive,0)), $big_fetch_expect,
+      'xy() big positive fetch');
+  is (scalar($image->xy($big_positive,$big_positive)), $big_fetch_expect,
+      'xy() big positive fetch');
+}
+
 sub check_line {
-  my ($image) = @_;
+  my ($image, %options) = @_;
   my ($width, $height) = $image->get('-width','-height');
+  my $image_clear_func = $options{'image_clear_func'};
 
   my $elem;
   foreach $elem (@sizes) {
     my ($x1,$y1, $x2,$y2) = @$elem;
 
-    my $name = "line $x1,$y1 $x2,$y2";
-    $image->rectangle (0,0, $width-1,$height-1, $black, 1);
-    $image->line ($x1,$y1, $x2,$y2, $white);
+    {
+      my $name = "line $x1,$y1 $x2,$y2";
+      &$image_clear_func();
+      $image->line ($x1,$y1, $x2,$y2, $white);
 
-    my $bad = (is_pixel ($image, $x1,$y1, $white, $name)
-               + is_pixel ($image, $x2,$y2, $white, $name)
-               + is_rect ($image, $x1-1,$x2+1, $y1-1,$y2+1, $black, $name));
-    if ($bad) {
-      dump_image ($image);
+      my $bad = (
+                 # endpoints
+                 is_pixel ($image, $x1,$y1, $white, $name)
+                 + is_pixel ($image, $x2,$y2, $white, $name)
+
+                 # nothing in surrounding rectangle
+                 + is_rect ($image, $x1-1,$y1-1, $x2+1,$y2+1, $black, $name));
+      if ($bad) {
+        dump_image ($image);
+      }
+    }
+    {
+      my $name = "line $x2,$y2 $x1,$y1, reversal";
+      &$image_clear_func();
+      $image->line ($x2,$y2, $x1,$y1, $white);
+
+      my $bad = (
+                 # endpoints
+                 is_pixel ($image, $x1,$y1, $white, $name)
+                 + is_pixel ($image, $x2,$y2, $white, $name)
+
+                 # nothing in surrounding rectangle
+                 + is_rect ($image, $x1-1,$y1-1, $x2+1,$y2+1, $black, $name));
+      if ($bad) {
+        dump_image ($image);
+      }
     }
   }
 }
@@ -310,14 +391,23 @@ sub rect_using_Other {
 }
 
 sub check_rectangle {
-  my ($image) = @_;
+  my ($image, %options) = @_;
   my ($width, $height) = $image->get('-width','-height');
+  my $image_clear_func = $options{'image_clear_func'};
 
   my $method;
   foreach $method ('rectangle',
-                      ($image->can('Image_Base_Other_rectangles')
-                       ? ('MyTestImageBase::rect_using_Other')
-                       : ())) {
+                   ($image->can('Image_Base_Other_rectangles')
+                    ? ('MyTestImageBase::rect_using_Other')
+                    : ())) {
+
+    # exercise some negatives
+    foreach my $fill (0,1) {
+      $image->$method (-100,-100,-10,-10, $white, $fill);
+      $image->$method (-100,-100,5,5, $white, $fill);
+      $image->$method (5,5,200,200, $white, $fill);
+    }
+
 
     my $elem;
     foreach $elem (@sizes) {
@@ -326,7 +416,7 @@ sub check_rectangle {
       {
         my $name = "$method unfilled $x1,$y1, $x2,$y2";
         my $fill = undef;
-        $image->rectangle (0,0, $width-1,$height-1, $black, 1);
+        &$image_clear_func();
 
         my @args = ($x1,$y1, $x2,$y2, $white, $fill);
         if ($method eq 'Image_Base_Other_rectangles') {
@@ -345,7 +435,7 @@ sub check_rectangle {
       {
         my $name = "$method filled $x1,$y1, $x2,$y2";
         my $fill = 123;
-        $image->rectangle (0,0, $width-1,$height-1, $black, 1);
+        &$image_clear_func();
 
         my @args = ($x1,$y1, $x2,$y2, $white, $fill);
         if ($method eq 'Image_Base_Other_rectangles') {
@@ -366,7 +456,7 @@ sub check_rectangle {
 sub check_ellipse {
   my ($image, %options) = @_;
   my ($width, $height) = $image->get('-width','-height');
-
+  my $image_clear_func = $options{'image_clear_func'};
   my $basefunc = $options{'base_ellipse_func'} || sub { 0 };
 
   my $elem;
@@ -389,7 +479,7 @@ sub check_ellipse {
       #   next if $name eq 'ellipse 3,3, 13,3';  # dodgy
       # }
 
-      $image->rectangle (0,0, $width-1,$height-1, $black, 1);
+        &$image_clear_func();
       $image->ellipse ($x1,$y1, $x2,$y2, $white, @$fillaref);
 
       my $bad = some_hline ($image, $x1,$x2, $y1, $white_expect, $name);
@@ -416,8 +506,17 @@ sub check_ellipse {
 
 sub check_diamond {
   my ($image, %options) = @_;
+  MyTestHelpers::diag("check_diamond()");
+
+  $options{'image_clear_func'} ||= do {
+    my ($width, $height) = $image->get('-width','-height');
+    sub {
+      $image->rectangle (0,0, $width-1,$height-1, $black, 1);
+    }
+  };
 
   my ($width, $height) = $image->get('-width','-height');
+  my $image_clear_func = $options{'image_clear_func'};
   local $white_expect = $white_expect || $white;
 
   my $elem;
@@ -432,7 +531,7 @@ sub check_diamond {
       my $name = "diamond $x1,$y1, $x2,$y2, fill=$fill";
       # MyTestHelpers::diag($name);
 
-      $image->rectangle (0,0, $width-1,$height-1, $black, 1);
+      &$image_clear_func();
       $image->diamond ($x1,$y1, $x2,$y2, $white, @$fillaref);
 
       my $bad;
@@ -457,7 +556,6 @@ sub check_diamond {
       }
 
       $bad += is_rect ($image, $x1-1,$y1-1, $x2+1,$y2+1, $black, $name);
-
       if ($bad) { dump_image($image); }
     }
   }
@@ -465,10 +563,25 @@ sub check_diamond {
 
 sub check_image {
   my ($image, %options) = @_;
+  MyTestHelpers::diag("check_image()");
+
   local $white_expect = $white_expect || $white;
 
-  check_line ($image);
-  check_rectangle ($image);
+  $options{'image_clear_func'} ||= do {
+    my ($width, $height) = $image->get('-width','-height');
+    sub {
+      $image->rectangle (0,0, $width-1,$height-1, $black, 1);
+      # { print "blank to\n"; dump_image($image); }
+    }
+  };
+
+  ### $white
+  ### $black
+  ### $white_expect
+
+  check_xy ($image, %options);
+  check_line ($image, %options);
+  check_rectangle ($image, %options);
   check_ellipse ($image, %options);
 }
 

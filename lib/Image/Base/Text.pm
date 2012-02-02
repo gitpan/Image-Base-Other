@@ -1,4 +1,4 @@
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -23,9 +23,10 @@ use 5.006;
 use strict;
 use Carp;
 use Text::Tabs ();
+use List::Util 'min','max';
 use vars '$VERSION', '@ISA';
 
-$VERSION = 7;
+$VERSION = 8;
 
 use Image::Base 1.12; # version 1.12 for ellipse() $fill
 @ISA = ('Image::Base');
@@ -184,60 +185,105 @@ sub save_string {
   return join ("\n", @$rows_array, (@$rows_array ? '' : ()));
 }
 
+#------------------------------------------------------------------------------
+# drawing
+
 sub xy {
   my ($self, $x, $y, $colour) = @_;
   ### Image-Base-Text xy(): @_[1 .. $#_]
 
-  # supposed to clip? 
+  # clip to width,height
   return if ($x < 0 || $x >= $self->{'-width'}
              || $y < 0 || $y >= @{$self->{'-rows_array'}});
 
-  foreach my $row ($self->{'-rows_array'}->[$y]) {
-    if (@_ == 3) {
-      return $self->character_to_colour (substr ($row, $x, 1));
-    }
-    substr ($row, $x, 1) = $self->colour_to_character($colour);
+  my $rows_array = $self->{'-rows_array'};
+  if (@_ == 3) {
+    return $self->character_to_colour (substr ($rows_array->[$y], $x, 1));
+  } else {
+    substr ($rows_array->[$y], $x, 1) = $self->colour_to_character($colour);
   }
 }
 
+sub line {
+  my ($self, $x1,$y1, $x2,$y2, $colour) = @_;
+
+  if ($y1 == $y2) {
+    ### horizontal line by substr() block store ...
+
+    my $rows_array = $self->{'-rows_array'};
+    if ($y1 >= 0 && $y1 <= $#$rows_array) {
+      if ($x1 > $x2) { ($x1,$x2) = ($x2,$x1) }
+      ($x1,$x2) = (max(min($x1,$x2),0),
+                   min(max($x1,$x2),$self->{'-width'}-1));
+      my $x_width = $x2-$x1+1;
+      substr($rows_array->[$y1], $x1, $x_width,
+             $self->colour_to_character($colour) x $x_width);
+    }
+
+  } else {
+    shift->SUPER::line(@_);
+  }
+}
+
+# rectangle() can do a substr() block store on each filled row (either all
+# if $fill, or the top and bottom if not).
+#
 sub rectangle {
   my ($self, $x1,$y1, $x2,$y2, $colour, $fill) = @_;
   ### Image-Base-Text xy(): @_[1,$#_]
 
-  if ($x1 > $x2) { ($x1,$x2) = ($x2,$x1); }
-  if ($y1 > $y2) { ($y1,$y2) = ($y2,$y1); }
-
   my $rows_array = $self->{'-rows_array'};
 
-  # not supposed to clip ...
-  # $x1 = max($x1,0);
-  # $y1 = max($y1,0);
-  # $x2 = min($x2,$self->{'-width'});
-  # $y2 = min($y2,$#$rows_array);
-
-  my $char = $self->colour_to_character($colour);
-  my $x_width = $x2 - $x1 + 1;
-  my $repl = $char x $x_width;
-
-  # top, and whole thing if filled
-  foreach my $y ($y1 .. ($fill ? $y2 : $y1)) {
-    substr ($rows_array->[$y], $x1, $x_width) = $repl;
+  unless ($x2 >= 0
+          && $y2 >= 0
+          && $x1 < $self->{'-width'}
+          && $y1 <= $#$rows_array) {
+    ### entirely outside 0,0,width,height ...
+    return;
   }
 
-  if (! $fill) {
-    # sides, unfilled
-    my @x = ($x1, ($x1 != $x2 ? $x2 : ()));
-    foreach my $y ($y1+1 .. $y2-1) {
-      foreach my $row ($rows_array->[$y]) {
-        foreach my $x (@x) {
-          substr ($row, $x, 1) = $char;
-        }
-      }
+  my $x1_clip = max($x1,0);
+  my $x2_clip = min($x2,$self->{'-width'}-1);
+
+  my $char = $self->colour_to_character($colour);
+  my $x_width = $x2_clip - $x1_clip + 1;
+  my $repl = $char x $x_width;
+
+  if ($fill) {
+    foreach my $y (max($y1,0) .. min($y2,$#$rows_array)) {
+      substr ($rows_array->[$y], $x1_clip, $x_width) = $repl;
     }
 
-    # bottom, if unfilled, and more than 1 high
-    if ($y2 != $y1) {
-      substr ($rows_array->[$y2], $x1, $x_width) = $repl;
+  } else {
+    ### top, if in range ...
+    if ($y1 >= 0) {
+      substr ($rows_array->[$y1], $x1_clip, $x_width) = $repl;
+    }
+
+    $y1++;
+    if ($y2 >= $y1) {
+      if ($y2 <= $#$rows_array) {
+        ### bottom in range and not same as top ...
+        substr ($rows_array->[$y2], $x1_clip, $x_width) = $repl;
+      }
+
+      ### sides, if any ...
+      $y2--;
+      if ($y2 >= $y1) {
+        my $y1_clip = max($y1,0);
+        my $y2_clip = min($y2,$#$rows_array);
+
+        if ($x1 == $x1_clip) {
+          foreach my $y ($y1_clip .. $y2_clip) {
+            substr ($rows_array->[$y], $x1, 1) = $char;
+          }
+        }
+        if ($x2 == $x2_clip) {
+          foreach my $y ($y1_clip .. $y2_clip) {
+            substr ($rows_array->[$y], $x2, 1) = $char;
+          }
+        }
+      }
     }
   }
 }
@@ -308,6 +354,9 @@ there's nothing to set input or output encoding for file read/write (making
 it fairly useless, unless perhaps you've got global PerlIO layers setup).
 
 =head1 FUNCTIONS
+
+See L<Image::Base/FUNCTIONS> for the behaviour common to all Image-Base
+classes.
 
 =over 4
 
@@ -380,7 +429,7 @@ http://user42.tuxfamily.org/image-base-other/index.html
 
 =head1 LICENSE
 
-Image-Base-Other is Copyright 2010, 2011 Kevin Ryde
+Image-Base-Other is Copyright 2010, 2011, 2012 Kevin Ryde
 
 Image-Base-Other is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as published by

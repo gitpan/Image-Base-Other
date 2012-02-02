@@ -8,7 +8,9 @@ debian/rules
 debian/source/format
 debian/watch
 devel/image-svgout.pl
+devel/image-xpm.pl
 devel/run.pl
+devel/text.pl
 devel/unused.pl
 inc/my_pod2html
 inc/MyMakeMakerExtras.pm
@@ -36,4 +38,7 @@ xt/0-Test-DistManifest.t
 xt/0-Test-Pod.t
 xt/0-Test-Synopsis.t
 xt/0-Test-YAML-Meta.t
+xtools/my-kwalitee.sh
+xtools/my-manifest.sh
+xtools/my-wunused.sh
 META.yml                                 Module meta-data (added by MakeMaker)
