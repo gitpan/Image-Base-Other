@@ -26,7 +26,7 @@ use Text::Tabs ();
 use List::Util 'min','max';
 use vars '$VERSION', '@ISA';
 
-$VERSION = 8;
+$VERSION = 9;
 
 use Image::Base 1.12; # version 1.12 for ellipse() $fill
 @ISA = ('Image::Base');
@@ -211,14 +211,17 @@ sub line {
     ### horizontal line by substr() block store ...
 
     my $rows_array = $self->{'-rows_array'};
-    if ($y1 >= 0 && $y1 <= $#$rows_array) {
-      if ($x1 > $x2) { ($x1,$x2) = ($x2,$x1) }
-      ($x1,$x2) = (max(min($x1,$x2),0),
-                   min(max($x1,$x2),$self->{'-width'}-1));
-      my $x_width = $x2-$x1+1;
-      substr($rows_array->[$y1], $x1, $x_width,
-             $self->colour_to_character($colour) x $x_width);
-    }
+    return if $y1 < 0 || $y1 > $#$rows_array; # entirely outside
+
+    if ($x1 > $x2) { ($x1,$x2) = ($x2,$x1) }  # x1 smaller
+    my $xmax = $self->{'-width'}-1;
+    return if $x2 < 0 || $x1 > $xmax; # entirely outside
+
+    $x1 = max($x1,0);
+    $x2 = min($x2,$xmax);
+    my $x_width = $x2-$x1+1;
+    substr($rows_array->[$y1], $x1, $x_width,
+           $self->colour_to_character($colour) x $x_width);
 
   } else {
     shift->SUPER::line(@_);

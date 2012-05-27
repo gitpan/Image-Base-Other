@@ -16,6 +16,9 @@ You can get a copy of the GNU General Public License online at
 <http://www.gnu.org/licenses/>.
 
 
+Version 9, May 2012
+    - fix line() text clip horizontal
+
 Version 8, February 2012
     - Text clip drawing to 0,0,width,height
 

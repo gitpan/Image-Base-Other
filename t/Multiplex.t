@@ -35,7 +35,7 @@ require Image::Base::Multiplex;
 # VERSION
 
 {
-  my $want_version = 8;
+  my $want_version = 9;
   ok ($Image::Base::Multiplex::VERSION, $want_version, 'VERSION variable');
   ok (Image::Base::Multiplex->VERSION,  $want_version, 'VERSION class method');
 

@@ -20,7 +20,7 @@
 use 5.004;
 use strict;
 use Test;
-plan tests => 2021;
+plan tests => 2023;
 
 use lib 't';
 use MyTestHelpers;
@@ -34,7 +34,7 @@ MyTestHelpers::diag("Image::Base version ", Image::Base->VERSION);
 # VERSION
 
 {
-  my $want_version = 8;
+  my $want_version = 9;
   ok ($Image::Base::Text::VERSION, $want_version, 'VERSION variable');
   ok (Image::Base::Text->VERSION,  $want_version, 'VERSION class method');
 
@@ -336,6 +336,11 @@ HERE
 {
   my $image = Image::Base::Text->new (-width => 10, -height => 5);
   $image->rectangle (0,0,9,4, '_', 1);
+  # various outside 
+  $image->line (1000,2, 999,2, '*', 1);
+  $image->line (-1000,2, -999,2, '*', 1);
+  $image->line (1,-2, 1,-2, '*', 1);
+  $image->line (1,200, 1,200, '*', 1);
   $image->line (3,5, 6,5, '*', 1);
   ok ($image->save_string, <<'HERE');
 __________
@@ -392,6 +397,19 @@ HERE
   ok ($image->xy (1,1), '*');
   ok ($image->xy (2,1), '*');
   ok ($image->xy (3,3), ' ');
+}
+
+foreach my $fill (0, 1) {
+  my $image = Image::Base::Text->new (-width => 10, -height => 5);
+  $image->rectangle (0,0,9,4, '_', 1);
+  $image->rectangle (3,-1, 4,2, '*', $fill);
+  ok ($image->save_string, <<'HERE');
+___**_____
+___**_____
+___**_____
+__________
+__________
+HERE
 }
 
 foreach my $fill (0, 1) {

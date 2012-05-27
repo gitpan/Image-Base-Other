@@ -36,7 +36,7 @@ MyTestHelpers::diag("Image::Base version ", Image::Base->VERSION);
 # VERSION
 
 {
-  my $want_version = 8;
+  my $want_version = 9;
   ok ($Image::Base::SVGout::VERSION, $want_version, 'VERSION variable');
   ok (Image::Base::SVGout->VERSION,  $want_version, 'VERSION class method');
 

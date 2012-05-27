@@ -21,9 +21,9 @@
 
 
 set -e
-mv MANIFEST MANIFEST.old
+mv MANIFEST MANIFEST.old || true
 touch SIGNATURE
 (
   make manifest 2>&1;
   diff -u MANIFEST.old MANIFEST
-) | ${PAGER:-less}
+) | ${PAGER:-more}

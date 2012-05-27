@@ -1,17 +1,17 @@
 #!/bin/sh
 
-# my-manifest.sh -- run cpants_lint kwalitee checker
+# my-kwalitee.sh -- run cpants_lint kwalitee checker
 
 # Copyright 2009, 2010, 2011, 2012 Kevin Ryde
 
-# my-manifest.sh is shared by several distributions.
+# my-kwalitee.sh is shared by several distributions.
 #
-# my-manifest.sh is free software; you can redistribute it and/or modify
+# my-kwalitee.sh is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 3, or (at your option) any later
 # version.
 #
-# my-manifest.sh is distributed in the hope that it will be useful, but
+# my-kwalitee.sh is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 # or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 # for more details.

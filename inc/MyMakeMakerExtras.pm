@@ -44,10 +44,10 @@ sub WriteMakefile {
   }
   $opts{'clean'}->{'FILES'} .= ' temp-lintian $(MY_HTML_FILES)';
 
-  if (! defined $opts{'realclean'}->{'FILES'}) {
-    $opts{'realclean'}->{'FILES'} = '';
-  }
-  $opts{'realclean'}->{'FILES'} .= ' TAGS';
+  # if (! defined $opts{'realclean'}->{'FILES'}) {
+  #   $opts{'realclean'}->{'FILES'} = '';
+  # }
+  # $opts{'realclean'}->{'FILES'} .= ' TAGS';
 
   if (! defined &MY::postamble) {
     *MY::postamble = \&MyMakeMakerExtras::postamble;
@@ -70,41 +70,6 @@ sub strip_comments {
   my ($str) = @_;
   $str =~ s/^\s*#.*\n//mg;
   $str
-}
-
-#------------------------------------------------------------------------------
-# META_MERGE
-
-# return hashref of "maximum_tests" under $opts, created if necessary
-sub _meta_merge_maximum_tests {
-  my ($opts) = @_;
-  $opts->{'META_MERGE'}->{'optional_features'}->{'maximum_tests'} ||=
-    { description => 'Have "make test" do as much as possible.',
-      requires => { },
-    };
-  return $opts->{'META_MERGE'}->{'optional_features'}->{'maximum_tests'}->{'requires'};
-}
-
-# return true if MIN_PERL_VERSION in $opts is < $ver, or no MIN_PERL_VERSION
-sub _min_perl_version_lt {
-  my ($opts, $perlver) = @_;
-  return (! defined $opts->{'MIN_PERL_VERSION'}
-          || $opts->{'MIN_PERL_VERSION'} < $perlver);
-}
-
-sub _meta_merge_req_add {
-  my $req = shift;
-  ### MyMakeMakerExtras META_MERGE: @_
-  while (@_) {
-    my $module = shift;
-    my $version = shift;
-    if (defined $req->{$module}) {
-      if ($req->{$module} > $version) {
-        $version = $req->{$module};
-      }
-    }
-    $req->{$module} = $version;
-  }
 }
 
 #------------------------------------------------------------------------------
@@ -244,45 +209,6 @@ HERE
   # ------ check-copyright-years ------
   $post .= <<'HERE';
 
-# find files in the dist with mod times this year, but without this year in
-# the copyright line
-MY_HIDE=
-check-copyright-years:
-	year=`date +%Y`; \
-	tar tvfz $(DISTVNAME).tar.gz \
-	| egrep "$$year-|debian/copyright" \
-	| sed 's:^.*$(DISTVNAME)/::' \
-	| (result=0; \
-	  while read i; do \
-	    GREP=grep; \
-	    case $$i in \
-	      '' | */ \
-	      | ppport.h \
-	      | debian/changelog | debian/compat | debian/doc-base \
-	      | debian/patches/*.diff | debian/source/format \
-	      | COPYING | MANIFEST* | SIGNATURE | META.yml \
-	      | version.texi | */version.texi \
-	      | *utf16* | examples/rs''s2lea''fnode.conf \
-	      | */MathI''mage/ln2.gz | */MathI''mage/pi.gz \
-	      | *.mo | *.locatedb* | t/samp.* \
-	      | t/empty.dat | t/*.xpm | t/*.xbm | t/*.jpg | t/*.gif \
-	      | t/*.g$(MY_HIDE)d) \
-	        continue ;; \
-	      *.gz) GREP=zgrep ;; \
-	    esac; \
-	    if test -e "$(srcdir)/$$i"; then f="$(srcdir)/$$i"; \
-	    else f="$$i"; fi; \
-	    if ! $$GREP -q "Copyright.*$$year" $$f; then \
-	      echo "$$i":"1: this file"; \
-	      grep Copyright $$f; \
-	      result=1; \
-	    fi; \
-	  done; \
-	  exit $$result)
-
-check-spelling:
-	if find . -type f | egrep -v '(Makefile|dist-deb)' | xargs egrep --color=always -nHi '\b[t]o to\b|[t]ranpose|[a]djustement|[g]lpyh|[r]ectanglar|[a]vailabe|[g]rabing|[c]usor|[r]efering|[w]riteable|[n]ineth|\b[o]mmitt?ed|[o]mited|[$$][rd]elf|[r]equrie|[n]oticable|[c]ontinous|[e]xistant|[e]xplict|[a]gument|[d]estionation|\b[t]he the\b|\b[w]ith with\b|\b[i]n in\b|\b[tw]hen then\b|\b[n]ote sure\b|[c]orrespondance|[s]prial'; \
-	then false; else true; fi
 HERE
 
   $post .= "\n";
@@ -292,87 +218,6 @@ HERE
   $post .= <<'HERE';
 check-file-part-of:
 	if grep --text 'This file is'' part of ' -r . | egrep -iv '$(DISTNAME)$(MY_EXTRA_FILE_PART_OF)'; then false; else true; fi
-
-diff-prev:
-	rm -rf diff.tmp
-	mkdir diff.tmp
-	cd diff.tmp \
-	&& tar xfz ../$(DISTNAME)-`expr $(VERSION) - 1`.tar.gz \
-	&& tar xfz ../$(DISTNAME)-$(VERSION).tar.gz
-	-cd diff.tmp; diff -ur $(DISTNAME)-`expr $(VERSION) - 1` \
-	                       $(DISTNAME)-$(VERSION) >tree.diff
-	-$${PAGER:-less} diff.tmp/tree.diff
-	rm -rf diff.tmp
-
-# in a hash-style multi-const this "use constant" pattern only picks up the
-# first constant, unfortunately, but it's better than nothing
-TAG_FILES = $(TO_INST_PM)
-TAGS: $(TAG_FILES)
-	etags \
-	  --regex='{perl}/use[ \t]+constant\(::defer\)?[ \t]+\({[ \t]*\)?\([A-Za-z_][^ \t=,;]+\)/\3/' \
-	  $(TAG_FILES)
-
-HERE
-
-  my $have_XS = scalar %{$makemaker->{'XS'}};
-  my $arch = ($have_XS
-              ? `dpkg --print-architecture`
-              : 'all');
-  chomp($arch);
-  my $debname = (defined $makemaker->{'EXE_FILES'}
-                 && $makemaker->{'EXE_FILES'}->[0] !~ /^gtk2/
-                 ? lc($makemaker->{'DISTNAME'})
-                 : lc("lib$makemaker->{'DISTNAME'}-perl"));
-  $post .=
-    "DEBNAME = $debname\n"
-      . "DPKG_ARCH = $arch\n"
-        . <<'HERE';
-DEBVNAME = $(DEBNAME)_$(VERSION)-1
-DEBFILE = $(DEBVNAME)_$(DPKG_ARCH).deb
-
-# ExtUtils::MakeMaker 6.42 of perl 5.10.0 makes "$(DISTVNAME).tar.gz" depend
-# on "$(DISTVNAME)" distdir directory, which is always non-existent after a
-# successful dist build, so the .tar.gz is always rebuilt.
-#
-# So although the .deb depends on the .tar.gz don't express that here or it
-# rebuilds the .tar.gz every time.
-#
-# The right rule for the .tar.gz would be to depend on the files which go
-# into it of course ...
-#
-# DISPLAY is unset for making a deb since under fakeroot gtk stuff may try
-# to read config files like ~/.pangorc from root's home dir /root/.pangorc,
-# and that dir will be unreadable by ordinary users (normally), provoking
-# warnings and possible failures from nowarnings().
-#
-$(DEBFILE) deb:
-	test -f $(DISTVNAME).tar.gz || $(MAKE) $(DISTVNAME).tar.gz
-	debver="`dpkg-parsechangelog -c1 | sed -n -r -e 's/^Version: (.*)-[0-9.]+$$/\1/p'`"; \
-	  echo "debver $$debver", want $(VERSION); \
-	  test "$$debver" = "$(VERSION)"
-	rm -rf $(DISTVNAME)
-	tar xfz $(DISTVNAME).tar.gz
-	unset DISPLAY; export DISPLAY; \
-	  cd $(DISTVNAME) \
-	  && dpkg-checkbuilddeps debian/control \
-	  && fakeroot debian/rules binary
-	rm -rf $(DISTVNAME)
-
-lintian-deb: $(DEBFILE)
-	lintian -I -i --suppress-tags new-package-should-close-itp-bug,desktop-entry-contains-encoding-key \
-	  $(DEBFILE)
-lintian-source:
-	rm -rf temp-lintian; \
-	mkdir temp-lintian; \
-	cd temp-lintian; \
-	cp ../$(DISTVNAME).tar.gz $(DEBNAME)_$(VERSION).orig.tar.gz; \
-	tar xfz $(DEBNAME)_$(VERSION).orig.tar.gz; \
-	mv -T $(DISTVNAME) $(DEBNAME)-$(VERSION); \
-	dpkg-source -b $(DEBNAME)-$(VERSION) \
-	               $(DEBNAME)_$(VERSION).orig.tar.gz; \
-	lintian -I -i --suppress-tags empty-debian-diff,debian-rules-uses-deprecated-makefile *.dsc; \
-	cd ..; \
-	rm -rf temp-lintian
 
 HERE
 
@@ -408,6 +253,24 @@ __END__
 
 
 # Old stuff:
+
+# #------------------------------------------------------------------------------
+# # META_MERGE
+# 
+# sub _meta_merge_req_add {
+#   my $req = shift;
+#   ### MyMakeMakerExtras META_MERGE: @_
+#   while (@_) {
+#     my $module = shift;
+#     my $version = shift;
+#     if (defined $req->{$module}) {
+#       if ($req->{$module} > $version) {
+#         $version = $req->{$module};
+#       }
+#     }
+#     $req->{$module} = $version;
+#   }
+# }
 
 # # return hashref of "maximum_devel" under $opts, created if necessary
 # sub _meta_merge_maximum_devel {
@@ -481,3 +344,21 @@ __END__
 #     }
 #   }
 # }
+
+# # return hashref of "maximum_tests" under $opts, created if necessary
+# sub _meta_merge_maximum_tests {
+#   my ($opts) = @_;
+#   $opts->{'META_MERGE'}->{'optional_features'}->{'maximum_tests'} ||=
+#     { description => 'Have "make test" do as much as possible.',
+#       requires => { },
+#     };
+#   return $opts->{'META_MERGE'}->{'optional_features'}->{'maximum_tests'}->{'requires'};
+# }
+
+# # return true if MIN_PERL_VERSION in $opts is < $ver, or no MIN_PERL_VERSION
+# sub _min_perl_version_lt {
+#   my ($opts, $perlver) = @_;
+#   return (! defined $opts->{'MIN_PERL_VERSION'}
+#           || $opts->{'MIN_PERL_VERSION'} < $perlver);
+# }
+

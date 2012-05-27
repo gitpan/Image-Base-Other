@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-Other.
 #
@@ -21,38 +21,33 @@ use 5.004;
 use strict;
 use Image::Base::Text;
 use Test;
-BEGIN {
-  plan tests => 1;
-}
+plan tests => 1;
 
 use lib 't';
 use MyTestHelpers;
 MyTestHelpers::nowarnings();
 
-# 2.002 for "ignore"
-my $have_test_weaken = eval "use Test::Weaken 2.002; 1";
+# 3.018 for "ignore_object"
+my $have_test_weaken = eval "use Test::Weaken 3.018; 1";
+my $skip;
 if (! $have_test_weaken) {
-  MyTestHelpers::diag ("Test::Weaken 2.002 not available -- $@");
+  MyTestHelpers::diag ("Test::Weaken 3.018 not available -- $@");
+  $skip = "due to Test::Weaken 3.018 not available";
 }
-my $skip = "due to Test::Weaken 2.002 not available";
 MyTestHelpers::diag ("Test::Weaken version ", Test::Weaken->VERSION);
 
-
-sub my_ignore {
-  my ($ref) = @_;
-  return ($ref == Image::Base::Text->default_colour_to_character);
-}
 
 {
   my $leaks = $have_test_weaken && Test::Weaken::leaks
     ({ constructor => sub {
          return Image::Base::Text->new (-width => 10, -height => 10);
        },
-       ignore => \&my_ignore,
+       ignore_object => Image::Base::Text->default_colour_to_character,
      });
-  ok (defined $leaks,
-      '',
-      'deep garbage collection');
+  skip ($skip,
+        defined $leaks,
+        '',
+        'deep garbage collection');
   if ($leaks) {
     require Data::Dumper;
     MyTestHelpers::diag (Data::Dumper::Dumper($leaks));

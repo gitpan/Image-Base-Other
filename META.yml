@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Image-Base-Other
-version:            8
+version:            9
 abstract:           Misc other helpers for Image::Base.
 author:
     - Kevin Ryde <user42@zip.com.au>
